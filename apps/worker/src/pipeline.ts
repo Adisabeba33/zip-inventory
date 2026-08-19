@@ -190,7 +190,16 @@ export async function runSource(sourceId: string, options: RunOptions = {}): Pro
   // ---- 5. Anomaly gate. A collapse in item count is treated as our bug until
   // a second observation says otherwise.
   const anomaly = evaluateAnomaly({ previousItemCount: previousCount, currentItemCount: deduped.entries.length });
-  if (anomaly.blocked) {
+
+  // An admin who looked at a held snapshot and confirmed the drop is real can
+  // issue a one-shot override. Without it, the same old baseline would block
+  // this run too and the retailer's page would never catch up.
+  const override = anomaly.blocked ? await snapshots.findOpenAnomalyOverride(dispensary.id) : null;
+  if (override) {
+    await snapshots.consumeAnomalyOverride(override.id, runId);
+  }
+
+  if (anomaly.blocked && !override) {
     await inventory.recordUnpublishedSnapshot({
       dispensaryId: dispensary.id,
       sourceId,
@@ -250,8 +259,12 @@ export async function runSource(sourceId: string, options: RunOptions = {}): Pro
     itemCount: deduped.entries.length,
     entries: applied.entries,
     observations: normalized,
-    anomalyFlag: anomaly.reason === 'large_increase',
-    anomalyReason: anomaly.reason === 'ok' ? null : anomaly.detail,
+    anomalyFlag: anomaly.reason !== 'ok' && anomaly.reason !== 'first_snapshot',
+    anomalyReason: override
+      ? `${anomaly.detail} Published under an anomaly override issued by ${override.created_by}: ${override.reason}`
+      : anomaly.reason === 'ok'
+        ? null
+        : anomaly.detail,
   });
 
   await sources.recordSuccess(sourceId, now);
@@ -290,6 +303,8 @@ export async function runSource(sourceId: string, options: RunOptions = {}): Pro
     });
   }
 
+  if (!noChangeOnly(previousChecksum, checksum)) await revalidateDispensaryPage(dispensary.slug);
+
   const noChange = previousChecksum === checksum;
   return {
     sourceId,
@@ -304,6 +319,34 @@ export async function runSource(sourceId: string, options: RunOptions = {}): Pro
     removalCandidates: diff.removalCandidates.length,
     noChange,
   };
+}
+
+function noChangeOnly(previousChecksum: string | null, checksum: string): boolean {
+  return previousChecksum === checksum;
+}
+
+/**
+ * Tell the web app to drop its cached copy of this retailer's page.
+ *
+ * Best effort by design: the pages carry a short revalidation window anyway, so
+ * a web app that is down or unreachable delays a refresh rather than failing an
+ * observation.
+ */
+async function revalidateDispensaryPage(slug: string): Promise<void> {
+  if (!config.webRevalidateUrl || !config.adminApiToken) return;
+  try {
+    await fetch(config.webRevalidateUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${config.adminApiToken}`,
+      },
+      body: JSON.stringify({ slug }),
+      signal: AbortSignal.timeout(5000),
+    });
+  } catch (error) {
+    console.warn(`[worker] cache revalidation for ${slug} failed: ${(error as Error).message}`);
+  }
 }
 
 /**

@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { after, before, describe, it } from 'node:test';
-import { closePool, query } from '@inventory-index/db';
+import { closePool, query, snapshots } from '@inventory-index/db';
 import { runSource } from '../pipeline.js';
 
 /**
@@ -157,5 +157,38 @@ describe('observation pipeline', async () => {
     const outcome = await runSource(sourceId, { parserConfigOverride: { day: 0 }, now: day(1) });
     assert.equal(outcome.status, 'SKIPPED');
     assert.match(outcome.detail, /allows one observation every/);
+  });
+
+  it('publishes past the anomaly gate once an admin has confirmed the drop', async (t) => {
+    if (!databaseAvailable) return t.skip('no database');
+    const { dispensaryId, sourceId } = await reset();
+    await runSource(sourceId, { parserConfigOverride: { day: 0 }, now: day(1) });
+    await runSource(sourceId, { parserConfigOverride: { day: 1 }, now: day(2) });
+
+    const held = await query<{ id: string }>(
+      `SELECT id FROM inventory_snapshots
+        WHERE dispensary_id = $1 AND review_state = 'NEEDS_CONFIRMATION'
+        ORDER BY observed_at DESC LIMIT 1`,
+      [dispensaryId],
+    );
+    await snapshots.acceptAnomaly(held.rows[0]?.id as string, 'tester', 'Re-checked; the retailer really did.');
+
+    const outcome = await runSource(sourceId, { parserConfigOverride: { day: 1 }, now: day(3) });
+    assert.equal(outcome.status, 'SUCCESS');
+    assert.equal(outcome.itemCount, 3);
+
+    // The override releases the anomaly gate; it does not short-circuit the
+    // two-miss rule, so the seventeen absent strains are still listed after one
+    // miss and only drop off on the second.
+    assert.equal(await currentEntries(dispensaryId), 20);
+    await runSource(sourceId, { parserConfigOverride: { day: 1 }, now: day(4) });
+    assert.equal(await currentEntries(dispensaryId), 3);
+
+    // The override is single use: a further collapse is blocked again.
+    const consumed = await query<{ count: number }>(
+      'SELECT count(*)::int FROM anomaly_overrides WHERE dispensary_id = $1 AND consumed_at IS NOT NULL',
+      [dispensaryId],
+    );
+    assert.equal(consumed.rows[0]?.count, 1);
   });
 });

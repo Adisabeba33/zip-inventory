@@ -75,10 +75,16 @@ export async function setAutomationStatusAction(formData: FormData): Promise<voi
 export async function reviewSnapshotAction(formData: FormData): Promise<void> {
   await requireAdmin();
   const snapshotId = String(formData.get('snapshotId') ?? '');
-  const decision = formData.get('decision') === 'accept' ? 'ACCEPTED' : 'REJECTED';
+  const accepted = formData.get('decision') === 'accept';
   const reason = String(formData.get('reason') ?? '').trim() || 'Reviewed from the admin dashboard.';
 
-  await snapshots.markReviewed(snapshotId, decision, adminActor(), reason);
+  if (accepted) {
+    // Also issues a one-shot override so the next successful observation may
+    // publish past the anomaly gate.
+    await snapshots.acceptAnomaly(snapshotId, adminActor(), reason);
+  } else {
+    await snapshots.markReviewed(snapshotId, 'REJECTED', adminActor(), reason);
+  }
   revalidatePath('/admin/anomalies');
 }
 

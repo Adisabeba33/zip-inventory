@@ -6,7 +6,7 @@ import { LegalNotice } from '@/components/LegalNotice';
 import { StrainList } from '@/components/StrainList';
 import { WeightTabs } from '@/components/WeightTabs';
 import { formatCheckTime, formatDate } from '@/lib/format';
-import { getDispensaryView, getStrainsFor } from '@/lib/queries';
+import { getChangesFor, getDispensaryView, getStrainsFor } from '@/lib/queries';
 import { robotsFor } from '@/lib/site';
 
 // Inventory pages stay out of search indexes until the legal release gate is
@@ -41,6 +41,10 @@ export default async function DispensaryPage({ params, searchParams }: PageProps
   const showInventory =
     view.directoryActive && view.hasApprovedSource && view.freshness.showInventory;
   const strains = showInventory ? await getStrainsFor(view.id, activeWeight, now) : [];
+  const changes = showInventory ? await getChangesFor(view.id) : null;
+  const changeCount = changes
+    ? changes.newlyListed.length + changes.returned.length + changes.noLongerListed.length
+    : 0;
 
   return (
     <>
@@ -81,6 +85,14 @@ export default async function DispensaryPage({ params, searchParams }: PageProps
               <strong>Inventory check delayed.</strong> This data is stale. Last successful check:{' '}
               {formatDate(view.lastSuccessAt)}.
             </div>
+          ) : null}
+
+          {changes && changeCount > 0 ? (
+            <p className="small muted" style={{ marginTop: '0.9rem', marginBottom: 0 }}>
+              Recently: {changes.newlyListed.length} newly listed · {changes.returned.length} returned ·{' '}
+              {changes.noLongerListed.length} no longer listed ·{' '}
+              <Link href={`/d/${view.slug}/changes`}>View changes</Link>
+            </p>
           ) : null}
 
           <WeightTabs

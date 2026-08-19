@@ -57,8 +57,9 @@ export default async function AdminAnomaliesPage() {
               </button>
             </form>
             <p className="small faint" style={{ marginTop: '0.6rem' }}>
-              Accepting records the decision; the next successful observation applies the change. Rejecting keeps
-              the previous snapshot live and leaves the source to be re-checked on its normal schedule.
+              Accepting records the decision and issues a single override, valid for 48 hours, so the next
+              successful observation may publish past the anomaly gate. Rejecting keeps the previous snapshot
+              live and leaves the source to be re-checked on its normal schedule.
             </p>
           </section>
         ))

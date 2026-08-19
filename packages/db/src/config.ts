@@ -78,6 +78,13 @@ export const config = {
   },
 
   adminApiToken: str('ADMIN_API_TOKEN', ''),
+
+  /**
+   * Where the worker pings after publishing a snapshot so the retailer's cached
+   * page updates immediately. Unset means the page simply waits out its normal
+   * revalidation window.
+   */
+  webRevalidateUrl: str('WEB_REVALIDATE_URL', ''),
 } as const;
 
 export type AppConfig = typeof config;
