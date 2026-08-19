@@ -1,0 +1,16 @@
+{
+  "name": "@inventory-index/core",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./*": "./src/*.ts"
+  },
+  "scripts": {
+    "test": "node --import tsx --test --test-reporter=dot \"src/**/*.test.ts\"",
+    "typecheck": "tsc --noEmit"
+  }
+}

@@ -1,0 +1,830 @@
+{
+  "note": "Local development fixture. Invented menu data for an invented retailer; no real dispensary, brand or website is represented here.",
+  "days": [
+    {
+      "label": "day 0 - baseline",
+      "items": [
+        {
+          "sourceItemId": "sku-1",
+          "name": "Hudson Valley Grown - Blue Dream - 3.5g Flower",
+          "weight": "3.5g",
+          "brand": "Hudson Valley Grown",
+          "category": "Flower"
+        },
+        {
+          "sourceItemId": "sku-2",
+          "name": "Hudson Valley Grown - Gelato 41 - 3.5g Flower",
+          "weight": "3.5g",
+          "brand": "Hudson Valley Grown",
+          "category": "Flower"
+        },
+        {
+          "sourceItemId": "sku-3",
+          "name": "Empire Cultivars - Gushers - 3.5g Flower",
+          "weight": "3.5g",
+          "brand": "Empire Cultivars",
+          "category": "Flower"
+        },
+        {
+          "sourceItemId": "sku-4",
+          "name": "Empire Cultivars - Ice Cream Cake - 3.5g Flower",
+          "weight": "3.5g",
+          "brand": "Empire Cultivars",
+          "category": "Flower"
+        },
+        {
+          "sourceItemId": "sku-5",
+          "name": "Northline Farms - Lemon Cherry Gelato - 3.5g Flower",
+          "weight": "3.5g",
+          "brand": "Northline Farms",
+          "category": "Flower"
+        },
+        {
+          "sourceItemId": "sku-6",
+          "name": "Northline Farms - MAC 1 - 3.5g Flower",
+          "weight": "3.5g",
+          "brand": "Northline Farms",
+          "category": "Flower"
+        },
+        {
+          "sourceItemId": "sku-7",
+          "name": "Empire Cultivars - Permanent Marker - 3.5g Flower",
+          "weight": "3.5g",
+          "brand": "Empire Cultivars",
+          "category": "Flower"
+        },
+        {
+          "sourceItemId": "sku-8",
+          "name": "Hudson Valley Grown - Runtz - 3.5g Flower",
+          "weight": "3.5g",
+          "brand": "Hudson Valley Grown",
+          "category": "Flower"
+        },
+        {
+          "sourceItemId": "sku-9",
+          "name": "Northline Farms - Sour Diesel - 3.5g Flower",
+          "weight": "3.5g",
+          "brand": "Northline Farms",
+          "category": "Flower"
+        },
+        {
+          "sourceItemId": "sku-10",
+          "name": "Empire Cultivars - Wedding Cake - 3.5g Flower",
+          "weight": "3.5g",
+          "brand": "Empire Cultivars",
+          "category": "Flower"
+        },
+        {
+          "sourceItemId": "sku-11",
+          "name": "Hudson Valley Grown - Zkittlez - 3.5g Flower",
+          "weight": "3.5g",
+          "brand": "Hudson Valley Grown",
+          "category": "Flower"
+        },
+        {
+          "sourceItemId": "sku-12",
+          "name": "Northline Farms - Apple Fritter - 3.5g Flower",
+          "weight": "3.5g",
+          "brand": "Northline Farms",
+          "category": "Flower"
+        },
+        {
+          "sourceItemId": "sku-13",
+          "name": "Hudson Valley Grown - Blue Dream - 7g Flower",
+          "weight": "7g",
+          "brand": "Hudson Valley Grown",
+          "category": "Flower"
+        },
+        {
+          "sourceItemId": "sku-14",
+          "name": "Northline Farms - Sour Diesel - 7g Flower",
+          "weight": "7g",
+          "brand": "Northline Farms",
+          "category": "Flower"
+        },
+        {
+          "sourceItemId": "sku-15",
+          "name": "Empire Cultivars - Wedding Cake - 7g Flower",
+          "weight": "7g",
+          "brand": "Empire Cultivars",
+          "category": "Flower"
+        },
+        {
+          "sourceItemId": "sku-16",
+          "name": "Empire Cultivars - GG4 - 14g Flower",
+          "weight": "1/2 oz",
+          "brand": "Empire Cultivars",
+          "category": "Flower"
+        },
+        {
+          "sourceItemId": "sku-17",
+          "name": "Hudson Valley Grown - Blue Dream - 14g Flower",
+          "weight": "1/2 oz",
+          "brand": "Hudson Valley Grown",
+          "category": "Flower"
+        },
+        {
+          "sourceItemId": "sku-18",
+          "name": "Northline Farms - Animal Cookies - 1oz Flower",
+          "weight": "28g",
+          "brand": "Northline Farms",
+          "category": "Flower"
+        },
+        {
+          "sourceItemId": "sku-19",
+          "name": "Hudson Valley Grown - Ghost Train Haze - 1oz Flower",
+          "weight": "28g",
+          "brand": "Hudson Valley Grown",
+          "category": "Flower"
+        },
+        {
+          "sourceItemId": "sku-20",
+          "name": "Empire Cultivars - Gushers - 1oz Flower",
+          "weight": "28g",
+          "brand": "Empire Cultivars",
+          "category": "Flower"
+        },
+        {
+          "sourceItemId": "sku-21",
+          "name": "Northline Farms - Pineapple Express - 1oz Flower",
+          "weight": "28g",
+          "brand": "Northline Farms",
+          "category": "Flower"
+        },
+        {
+          "sourceItemId": "sku-22",
+          "name": "Northline Farms - Sour Diesel - 1oz Flower",
+          "weight": "28g",
+          "brand": "Northline Farms",
+          "category": "Flower"
+        },
+        {
+          "sourceItemId": "sku-23",
+          "name": "Hudson Valley Grown - Super Silver Haze - 1oz Flower",
+          "weight": "28g",
+          "brand": "Hudson Valley Grown",
+          "category": "Flower"
+        },
+        {
+          "sourceItemId": "sku-800",
+          "name": "Northline Farms - Permanent Marker - 3.5g Premium Flower",
+          "weight": "3.5g",
+          "brand": "Northline Farms",
+          "category": "Flower"
+        },
+        {
+          "sourceItemId": "sku-900",
+          "name": "Blue Dream Pre-Roll 5pk",
+          "weight": "0.5g",
+          "brand": "Empire Cultivars",
+          "category": "Pre-Rolls"
+        },
+        {
+          "sourceItemId": "sku-901",
+          "name": "Gelato Live Resin Cartridge",
+          "weight": "0.5g",
+          "brand": "Empire Cultivars",
+          "category": "Vapes"
+        },
+        {
+          "sourceItemId": "sku-902",
+          "name": "Watermelon Gummies 10pk",
+          "weight": null,
+          "brand": "Sweetwater",
+          "category": "Edibles"
+        },
+        {
+          "sourceItemId": "sku-903",
+          "name": "Branded Grinder",
+          "weight": null,
+          "brand": null,
+          "category": "Accessories"
+        },
+        {
+          "sourceItemId": "sku-904",
+          "name": "Northline Farms - Blue Dream - 10g Flower",
+          "weight": "10g",
+          "brand": "Northline Farms",
+          "category": "Flower"
+        }
+      ]
+    },
+    {
+      "label": "day 1 - one new eighth, GG4 half missing once",
+      "items": [
+        {
+          "sourceItemId": "sku-1",
+          "name": "Hudson Valley Grown - Blue Dream - 3.5g Flower",
+          "weight": "3.5g",
+          "brand": "Hudson Valley Grown",
+          "category": "Flower"
+        },
+        {
+          "sourceItemId": "sku-2",
+          "name": "Hudson Valley Grown - Gelato 41 - 3.5g Flower",
+          "weight": "3.5g",
+          "brand": "Hudson Valley Grown",
+          "category": "Flower"
+        },
+        {
+          "sourceItemId": "sku-3",
+          "name": "Empire Cultivars - Gushers - 3.5g Flower",
+          "weight": "3.5g",
+          "brand": "Empire Cultivars",
+          "category": "Flower"
+        },
+        {
+          "sourceItemId": "sku-4",
+          "name": "Empire Cultivars - Ice Cream Cake - 3.5g Flower",
+          "weight": "3.5g",
+          "brand": "Empire Cultivars",
+          "category": "Flower"
+        },
+        {
+          "sourceItemId": "sku-5",
+          "name": "Northline Farms - Lemon Cherry Gelato - 3.5g Flower",
+          "weight": "3.5g",
+          "brand": "Northline Farms",
+          "category": "Flower"
+        },
+        {
+          "sourceItemId": "sku-6",
+          "name": "Northline Farms - MAC 1 - 3.5g Flower",
+          "weight": "3.5g",
+          "brand": "Northline Farms",
+          "category": "Flower"
+        },
+        {
+          "sourceItemId": "sku-7",
+          "name": "Empire Cultivars - Permanent Marker - 3.5g Flower",
+          "weight": "3.5g",
+          "brand": "Empire Cultivars",
+          "category": "Flower"
+        },
+        {
+          "sourceItemId": "sku-8",
+          "name": "Hudson Valley Grown - Runtz - 3.5g Flower",
+          "weight": "3.5g",
+          "brand": "Hudson Valley Grown",
+          "category": "Flower"
+        },
+        {
+          "sourceItemId": "sku-9",
+          "name": "Northline Farms - Sour Diesel - 3.5g Flower",
+          "weight": "3.5g",
+          "brand": "Northline Farms",
+          "category": "Flower"
+        },
+        {
+          "sourceItemId": "sku-10",
+          "name": "Empire Cultivars - Wedding Cake - 3.5g Flower",
+          "weight": "3.5g",
+          "brand": "Empire Cultivars",
+          "category": "Flower"
+        },
+        {
+          "sourceItemId": "sku-11",
+          "name": "Hudson Valley Grown - Zkittlez - 3.5g Flower",
+          "weight": "3.5g",
+          "brand": "Hudson Valley Grown",
+          "category": "Flower"
+        },
+        {
+          "sourceItemId": "sku-12",
+          "name": "Northline Farms - Apple Fritter - 3.5g Flower",
+          "weight": "3.5g",
+          "brand": "Northline Farms",
+          "category": "Flower"
+        },
+        {
+          "sourceItemId": "sku-13",
+          "name": "Hudson Valley Grown - Ghost Train Haze - 3.5g Flower",
+          "weight": "3.5g",
+          "brand": "Hudson Valley Grown",
+          "category": "Flower"
+        },
+        {
+          "sourceItemId": "sku-14",
+          "name": "Hudson Valley Grown - Blue Dream - 7g Flower",
+          "weight": "7g",
+          "brand": "Hudson Valley Grown",
+          "category": "Flower"
+        },
+        {
+          "sourceItemId": "sku-15",
+          "name": "Northline Farms - Sour Diesel - 7g Flower",
+          "weight": "7g",
+          "brand": "Northline Farms",
+          "category": "Flower"
+        },
+        {
+          "sourceItemId": "sku-16",
+          "name": "Empire Cultivars - Wedding Cake - 7g Flower",
+          "weight": "7g",
+          "brand": "Empire Cultivars",
+          "category": "Flower"
+        },
+        {
+          "sourceItemId": "sku-17",
+          "name": "Hudson Valley Grown - Blue Dream - 14g Flower",
+          "weight": "1/2 oz",
+          "brand": "Hudson Valley Grown",
+          "category": "Flower"
+        },
+        {
+          "sourceItemId": "sku-18",
+          "name": "Northline Farms - Animal Cookies - 1oz Flower",
+          "weight": "28g",
+          "brand": "Northline Farms",
+          "category": "Flower"
+        },
+        {
+          "sourceItemId": "sku-19",
+          "name": "Hudson Valley Grown - Ghost Train Haze - 1oz Flower",
+          "weight": "28g",
+          "brand": "Hudson Valley Grown",
+          "category": "Flower"
+        },
+        {
+          "sourceItemId": "sku-20",
+          "name": "Empire Cultivars - Gushers - 1oz Flower",
+          "weight": "28g",
+          "brand": "Empire Cultivars",
+          "category": "Flower"
+        },
+        {
+          "sourceItemId": "sku-21",
+          "name": "Northline Farms - Pineapple Express - 1oz Flower",
+          "weight": "28g",
+          "brand": "Northline Farms",
+          "category": "Flower"
+        },
+        {
+          "sourceItemId": "sku-22",
+          "name": "Northline Farms - Sour Diesel - 1oz Flower",
+          "weight": "28g",
+          "brand": "Northline Farms",
+          "category": "Flower"
+        },
+        {
+          "sourceItemId": "sku-23",
+          "name": "Hudson Valley Grown - Super Silver Haze - 1oz Flower",
+          "weight": "28g",
+          "brand": "Hudson Valley Grown",
+          "category": "Flower"
+        },
+        {
+          "sourceItemId": "sku-800",
+          "name": "Northline Farms - Permanent Marker - 3.5g Premium Flower",
+          "weight": "3.5g",
+          "brand": "Northline Farms",
+          "category": "Flower"
+        },
+        {
+          "sourceItemId": "sku-900",
+          "name": "Blue Dream Pre-Roll 5pk",
+          "weight": "0.5g",
+          "brand": "Empire Cultivars",
+          "category": "Pre-Rolls"
+        },
+        {
+          "sourceItemId": "sku-901",
+          "name": "Gelato Live Resin Cartridge",
+          "weight": "0.5g",
+          "brand": "Empire Cultivars",
+          "category": "Vapes"
+        },
+        {
+          "sourceItemId": "sku-902",
+          "name": "Watermelon Gummies 10pk",
+          "weight": null,
+          "brand": "Sweetwater",
+          "category": "Edibles"
+        },
+        {
+          "sourceItemId": "sku-903",
+          "name": "Branded Grinder",
+          "weight": null,
+          "brand": null,
+          "category": "Accessories"
+        },
+        {
+          "sourceItemId": "sku-904",
+          "name": "Northline Farms - Blue Dream - 10g Flower",
+          "weight": "10g",
+          "brand": "Northline Farms",
+          "category": "Flower"
+        }
+      ]
+    },
+    {
+      "label": "day 2 - GG4 half de-listed, Zkittlez missing once",
+      "items": [
+        {
+          "sourceItemId": "sku-1",
+          "name": "Hudson Valley Grown - Blue Dream - 3.5g Flower",
+          "weight": "3.5g",
+          "brand": "Hudson Valley Grown",
+          "category": "Flower"
+        },
+        {
+          "sourceItemId": "sku-2",
+          "name": "Hudson Valley Grown - Gelato 41 - 3.5g Flower",
+          "weight": "3.5g",
+          "brand": "Hudson Valley Grown",
+          "category": "Flower"
+        },
+        {
+          "sourceItemId": "sku-3",
+          "name": "Empire Cultivars - Gushers - 3.5g Flower",
+          "weight": "3.5g",
+          "brand": "Empire Cultivars",
+          "category": "Flower"
+        },
+        {
+          "sourceItemId": "sku-4",
+          "name": "Empire Cultivars - Ice Cream Cake - 3.5g Flower",
+          "weight": "3.5g",
+          "brand": "Empire Cultivars",
+          "category": "Flower"
+        },
+        {
+          "sourceItemId": "sku-5",
+          "name": "Northline Farms - Lemon Cherry Gelato - 3.5g Flower",
+          "weight": "3.5g",
+          "brand": "Northline Farms",
+          "category": "Flower"
+        },
+        {
+          "sourceItemId": "sku-6",
+          "name": "Northline Farms - MAC 1 - 3.5g Flower",
+          "weight": "3.5g",
+          "brand": "Northline Farms",
+          "category": "Flower"
+        },
+        {
+          "sourceItemId": "sku-7",
+          "name": "Empire Cultivars - Permanent Marker - 3.5g Flower",
+          "weight": "3.5g",
+          "brand": "Empire Cultivars",
+          "category": "Flower"
+        },
+        {
+          "sourceItemId": "sku-8",
+          "name": "Hudson Valley Grown - Runtz - 3.5g Flower",
+          "weight": "3.5g",
+          "brand": "Hudson Valley Grown",
+          "category": "Flower"
+        },
+        {
+          "sourceItemId": "sku-9",
+          "name": "Northline Farms - Sour Diesel - 3.5g Flower",
+          "weight": "3.5g",
+          "brand": "Northline Farms",
+          "category": "Flower"
+        },
+        {
+          "sourceItemId": "sku-10",
+          "name": "Empire Cultivars - Wedding Cake - 3.5g Flower",
+          "weight": "3.5g",
+          "brand": "Empire Cultivars",
+          "category": "Flower"
+        },
+        {
+          "sourceItemId": "sku-11",
+          "name": "Northline Farms - Apple Fritter - 3.5g Flower",
+          "weight": "3.5g",
+          "brand": "Northline Farms",
+          "category": "Flower"
+        },
+        {
+          "sourceItemId": "sku-12",
+          "name": "Hudson Valley Grown - Ghost Train Haze - 3.5g Flower",
+          "weight": "3.5g",
+          "brand": "Hudson Valley Grown",
+          "category": "Flower"
+        },
+        {
+          "sourceItemId": "sku-13",
+          "name": "Hudson Valley Grown - Blue Dream - 7g Flower",
+          "weight": "7g",
+          "brand": "Hudson Valley Grown",
+          "category": "Flower"
+        },
+        {
+          "sourceItemId": "sku-14",
+          "name": "Northline Farms - Sour Diesel - 7g Flower",
+          "weight": "7g",
+          "brand": "Northline Farms",
+          "category": "Flower"
+        },
+        {
+          "sourceItemId": "sku-15",
+          "name": "Empire Cultivars - Wedding Cake - 7g Flower",
+          "weight": "7g",
+          "brand": "Empire Cultivars",
+          "category": "Flower"
+        },
+        {
+          "sourceItemId": "sku-16",
+          "name": "Hudson Valley Grown - Blue Dream - 14g Flower",
+          "weight": "1/2 oz",
+          "brand": "Hudson Valley Grown",
+          "category": "Flower"
+        },
+        {
+          "sourceItemId": "sku-17",
+          "name": "Northline Farms - Animal Cookies - 1oz Flower",
+          "weight": "28g",
+          "brand": "Northline Farms",
+          "category": "Flower"
+        },
+        {
+          "sourceItemId": "sku-18",
+          "name": "Hudson Valley Grown - Ghost Train Haze - 1oz Flower",
+          "weight": "28g",
+          "brand": "Hudson Valley Grown",
+          "category": "Flower"
+        },
+        {
+          "sourceItemId": "sku-19",
+          "name": "Empire Cultivars - Gushers - 1oz Flower",
+          "weight": "28g",
+          "brand": "Empire Cultivars",
+          "category": "Flower"
+        },
+        {
+          "sourceItemId": "sku-20",
+          "name": "Northline Farms - Pineapple Express - 1oz Flower",
+          "weight": "28g",
+          "brand": "Northline Farms",
+          "category": "Flower"
+        },
+        {
+          "sourceItemId": "sku-21",
+          "name": "Northline Farms - Sour Diesel - 1oz Flower",
+          "weight": "28g",
+          "brand": "Northline Farms",
+          "category": "Flower"
+        },
+        {
+          "sourceItemId": "sku-22",
+          "name": "Hudson Valley Grown - Super Silver Haze - 1oz Flower",
+          "weight": "28g",
+          "brand": "Hudson Valley Grown",
+          "category": "Flower"
+        },
+        {
+          "sourceItemId": "sku-800",
+          "name": "Northline Farms - Permanent Marker - 3.5g Premium Flower",
+          "weight": "3.5g",
+          "brand": "Northline Farms",
+          "category": "Flower"
+        },
+        {
+          "sourceItemId": "sku-900",
+          "name": "Blue Dream Pre-Roll 5pk",
+          "weight": "0.5g",
+          "brand": "Empire Cultivars",
+          "category": "Pre-Rolls"
+        },
+        {
+          "sourceItemId": "sku-901",
+          "name": "Gelato Live Resin Cartridge",
+          "weight": "0.5g",
+          "brand": "Empire Cultivars",
+          "category": "Vapes"
+        },
+        {
+          "sourceItemId": "sku-902",
+          "name": "Watermelon Gummies 10pk",
+          "weight": null,
+          "brand": "Sweetwater",
+          "category": "Edibles"
+        },
+        {
+          "sourceItemId": "sku-903",
+          "name": "Branded Grinder",
+          "weight": null,
+          "brand": null,
+          "category": "Accessories"
+        },
+        {
+          "sourceItemId": "sku-904",
+          "name": "Northline Farms - Blue Dream - 10g Flower",
+          "weight": "10g",
+          "brand": "Northline Farms",
+          "category": "Flower"
+        }
+      ]
+    },
+    {
+      "label": "day 3 - Zkittlez de-listed, GG4 half returns",
+      "items": [
+        {
+          "sourceItemId": "sku-1",
+          "name": "Hudson Valley Grown - Blue Dream - 3.5g Flower",
+          "weight": "3.5g",
+          "brand": "Hudson Valley Grown",
+          "category": "Flower"
+        },
+        {
+          "sourceItemId": "sku-2",
+          "name": "Hudson Valley Grown - Gelato 41 - 3.5g Flower",
+          "weight": "3.5g",
+          "brand": "Hudson Valley Grown",
+          "category": "Flower"
+        },
+        {
+          "sourceItemId": "sku-3",
+          "name": "Empire Cultivars - Gushers - 3.5g Flower",
+          "weight": "3.5g",
+          "brand": "Empire Cultivars",
+          "category": "Flower"
+        },
+        {
+          "sourceItemId": "sku-4",
+          "name": "Empire Cultivars - Ice Cream Cake - 3.5g Flower",
+          "weight": "3.5g",
+          "brand": "Empire Cultivars",
+          "category": "Flower"
+        },
+        {
+          "sourceItemId": "sku-5",
+          "name": "Northline Farms - Lemon Cherry Gelato - 3.5g Flower",
+          "weight": "3.5g",
+          "brand": "Northline Farms",
+          "category": "Flower"
+        },
+        {
+          "sourceItemId": "sku-6",
+          "name": "Northline Farms - MAC 1 - 3.5g Flower",
+          "weight": "3.5g",
+          "brand": "Northline Farms",
+          "category": "Flower"
+        },
+        {
+          "sourceItemId": "sku-7",
+          "name": "Empire Cultivars - Permanent Marker - 3.5g Flower",
+          "weight": "3.5g",
+          "brand": "Empire Cultivars",
+          "category": "Flower"
+        },
+        {
+          "sourceItemId": "sku-8",
+          "name": "Hudson Valley Grown - Runtz - 3.5g Flower",
+          "weight": "3.5g",
+          "brand": "Hudson Valley Grown",
+          "category": "Flower"
+        },
+        {
+          "sourceItemId": "sku-9",
+          "name": "Northline Farms - Sour Diesel - 3.5g Flower",
+          "weight": "3.5g",
+          "brand": "Northline Farms",
+          "category": "Flower"
+        },
+        {
+          "sourceItemId": "sku-10",
+          "name": "Empire Cultivars - Wedding Cake - 3.5g Flower",
+          "weight": "3.5g",
+          "brand": "Empire Cultivars",
+          "category": "Flower"
+        },
+        {
+          "sourceItemId": "sku-11",
+          "name": "Northline Farms - Apple Fritter - 3.5g Flower",
+          "weight": "3.5g",
+          "brand": "Northline Farms",
+          "category": "Flower"
+        },
+        {
+          "sourceItemId": "sku-12",
+          "name": "Hudson Valley Grown - Ghost Train Haze - 3.5g Flower",
+          "weight": "3.5g",
+          "brand": "Hudson Valley Grown",
+          "category": "Flower"
+        },
+        {
+          "sourceItemId": "sku-13",
+          "name": "Hudson Valley Grown - Blue Dream - 7g Flower",
+          "weight": "7g",
+          "brand": "Hudson Valley Grown",
+          "category": "Flower"
+        },
+        {
+          "sourceItemId": "sku-14",
+          "name": "Northline Farms - Sour Diesel - 7g Flower",
+          "weight": "7g",
+          "brand": "Northline Farms",
+          "category": "Flower"
+        },
+        {
+          "sourceItemId": "sku-15",
+          "name": "Empire Cultivars - Wedding Cake - 7g Flower",
+          "weight": "7g",
+          "brand": "Empire Cultivars",
+          "category": "Flower"
+        },
+        {
+          "sourceItemId": "sku-16",
+          "name": "Empire Cultivars - GG4 - 14g Flower",
+          "weight": "1/2 oz",
+          "brand": "Empire Cultivars",
+          "category": "Flower"
+        },
+        {
+          "sourceItemId": "sku-17",
+          "name": "Hudson Valley Grown - Blue Dream - 14g Flower",
+          "weight": "1/2 oz",
+          "brand": "Hudson Valley Grown",
+          "category": "Flower"
+        },
+        {
+          "sourceItemId": "sku-18",
+          "name": "Northline Farms - Animal Cookies - 1oz Flower",
+          "weight": "28g",
+          "brand": "Northline Farms",
+          "category": "Flower"
+        },
+        {
+          "sourceItemId": "sku-19",
+          "name": "Hudson Valley Grown - Ghost Train Haze - 1oz Flower",
+          "weight": "28g",
+          "brand": "Hudson Valley Grown",
+          "category": "Flower"
+        },
+        {
+          "sourceItemId": "sku-20",
+          "name": "Empire Cultivars - Gushers - 1oz Flower",
+          "weight": "28g",
+          "brand": "Empire Cultivars",
+          "category": "Flower"
+        },
+        {
+          "sourceItemId": "sku-21",
+          "name": "Northline Farms - Pineapple Express - 1oz Flower",
+          "weight": "28g",
+          "brand": "Northline Farms",
+          "category": "Flower"
+        },
+        {
+          "sourceItemId": "sku-22",
+          "name": "Northline Farms - Sour Diesel - 1oz Flower",
+          "weight": "28g",
+          "brand": "Northline Farms",
+          "category": "Flower"
+        },
+        {
+          "sourceItemId": "sku-23",
+          "name": "Hudson Valley Grown - Super Silver Haze - 1oz Flower",
+          "weight": "28g",
+          "brand": "Hudson Valley Grown",
+          "category": "Flower"
+        },
+        {
+          "sourceItemId": "sku-800",
+          "name": "Northline Farms - Permanent Marker - 3.5g Premium Flower",
+          "weight": "3.5g",
+          "brand": "Northline Farms",
+          "category": "Flower"
+        },
+        {
+          "sourceItemId": "sku-900",
+          "name": "Blue Dream Pre-Roll 5pk",
+          "weight": "0.5g",
+          "brand": "Empire Cultivars",
+          "category": "Pre-Rolls"
+        },
+        {
+          "sourceItemId": "sku-901",
+          "name": "Gelato Live Resin Cartridge",
+          "weight": "0.5g",
+          "brand": "Empire Cultivars",
+          "category": "Vapes"
+        },
+        {
+          "sourceItemId": "sku-902",
+          "name": "Watermelon Gummies 10pk",
+          "weight": null,
+          "brand": "Sweetwater",
+          "category": "Edibles"
+        },
+        {
+          "sourceItemId": "sku-903",
+          "name": "Branded Grinder",
+          "weight": null,
+          "brand": null,
+          "category": "Accessories"
+        },
+        {
+          "sourceItemId": "sku-904",
+          "name": "Northline Farms - Blue Dream - 10g Flower",
+          "weight": "10g",
+          "brand": "Northline Farms",
+          "category": "Flower"
+        }
+      ]
+    }
+  ]
+}

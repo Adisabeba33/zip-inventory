@@ -1,0 +1,19 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "paths": {
+      "@inventory-index/core": ["./packages/core/src/index.ts"],
+      "@inventory-index/core/*": ["./packages/core/src/*"],
+      "@inventory-index/db": ["./packages/db/src/index.ts"],
+      "@inventory-index/db/*": ["./packages/db/src/*"]
+    },
+    "baseUrl": "."
+  },
+  "include": [
+    "packages/core/src/**/*.ts",
+    "packages/db/src/**/*.ts",
+    "packages/db/seed/**/*.ts",
+    "apps/worker/src/**/*.ts"
+  ]
+}
