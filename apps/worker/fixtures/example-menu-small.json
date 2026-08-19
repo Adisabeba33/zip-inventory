@@ -1,0 +1,148 @@
+{
+  "note": "Local development fixture. Invented menu data for an invented retailer.",
+  "days": [
+    {
+      "label": "day 0",
+      "items": [
+        {
+          "sourceItemId": "sku-1",
+          "name": "Northline Farms - Blue Dream - 3.5g Flower",
+          "weight": "3.5g",
+          "brand": "Northline Farms",
+          "category": "Flower"
+        },
+        {
+          "sourceItemId": "sku-2",
+          "name": "Northline Farms - Runtz - 3.5g Flower",
+          "weight": "3.5g",
+          "brand": "Northline Farms",
+          "category": "Flower"
+        },
+        {
+          "sourceItemId": "sku-3",
+          "name": "Northline Farms - Sour Diesel - 3.5g Flower",
+          "weight": "3.5g",
+          "brand": "Northline Farms",
+          "category": "Flower"
+        },
+        {
+          "sourceItemId": "sku-4",
+          "name": "Northline Farms - Gushers - 1oz Flower",
+          "weight": "28g",
+          "brand": "Northline Farms",
+          "category": "Flower"
+        },
+        {
+          "sourceItemId": "sku-900",
+          "name": "Blue Dream Pre-Roll 5pk",
+          "weight": "0.5g",
+          "brand": "Empire Cultivars",
+          "category": "Pre-Rolls"
+        },
+        {
+          "sourceItemId": "sku-901",
+          "name": "Gelato Live Resin Cartridge",
+          "weight": "0.5g",
+          "brand": "Empire Cultivars",
+          "category": "Vapes"
+        },
+        {
+          "sourceItemId": "sku-902",
+          "name": "Watermelon Gummies 10pk",
+          "weight": null,
+          "brand": "Sweetwater",
+          "category": "Edibles"
+        },
+        {
+          "sourceItemId": "sku-903",
+          "name": "Branded Grinder",
+          "weight": null,
+          "brand": null,
+          "category": "Accessories"
+        },
+        {
+          "sourceItemId": "sku-904",
+          "name": "Northline Farms - Blue Dream - 10g Flower",
+          "weight": "10g",
+          "brand": "Northline Farms",
+          "category": "Flower"
+        }
+      ]
+    },
+    {
+      "label": "day 1",
+      "items": [
+        {
+          "sourceItemId": "sku-1",
+          "name": "Northline Farms - Blue Dream - 3.5g Flower",
+          "weight": "3.5g",
+          "brand": "Northline Farms",
+          "category": "Flower"
+        },
+        {
+          "sourceItemId": "sku-2",
+          "name": "Northline Farms - Runtz - 3.5g Flower",
+          "weight": "3.5g",
+          "brand": "Northline Farms",
+          "category": "Flower"
+        },
+        {
+          "sourceItemId": "sku-3",
+          "name": "Northline Farms - Sour Diesel - 3.5g Flower",
+          "weight": "3.5g",
+          "brand": "Northline Farms",
+          "category": "Flower"
+        },
+        {
+          "sourceItemId": "sku-4",
+          "name": "Northline Farms - Gelato 41 - 3.5g Flower",
+          "weight": "3.5g",
+          "brand": "Northline Farms",
+          "category": "Flower"
+        },
+        {
+          "sourceItemId": "sku-5",
+          "name": "Northline Farms - Gushers - 1oz Flower",
+          "weight": "28g",
+          "brand": "Northline Farms",
+          "category": "Flower"
+        },
+        {
+          "sourceItemId": "sku-900",
+          "name": "Blue Dream Pre-Roll 5pk",
+          "weight": "0.5g",
+          "brand": "Empire Cultivars",
+          "category": "Pre-Rolls"
+        },
+        {
+          "sourceItemId": "sku-901",
+          "name": "Gelato Live Resin Cartridge",
+          "weight": "0.5g",
+          "brand": "Empire Cultivars",
+          "category": "Vapes"
+        },
+        {
+          "sourceItemId": "sku-902",
+          "name": "Watermelon Gummies 10pk",
+          "weight": null,
+          "brand": "Sweetwater",
+          "category": "Edibles"
+        },
+        {
+          "sourceItemId": "sku-903",
+          "name": "Branded Grinder",
+          "weight": null,
+          "brand": null,
+          "category": "Accessories"
+        },
+        {
+          "sourceItemId": "sku-904",
+          "name": "Northline Farms - Blue Dream - 10g Flower",
+          "weight": "10g",
+          "brand": "Northline Farms",
+          "category": "Flower"
+        }
+      ]
+    }
+  ]
+}

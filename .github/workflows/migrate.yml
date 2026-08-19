@@ -1,0 +1,48 @@
+# Applies database migrations against the deployed database.
+#
+# Deliberately manual. Migrations are not run from the Vercel build: builds can
+# run concurrently and on every preview deployment, and a schema change is a
+# decision, not a side effect of pushing a branch.
+name: Migrate database
+
+on:
+  workflow_dispatch:
+    inputs:
+      seed:
+        description: 'Also load development seed data (invented retailers, fixture source). Never on a real database.'
+        type: boolean
+        default: false
+
+jobs:
+  migrate:
+    runs-on: ubuntu-latest
+    environment: production
+
+    env:
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - name: Check the database URL is configured
+        run: |
+          if [ -z "$DATABASE_URL" ]; then
+            echo "DATABASE_URL secret is not set for this environment." >&2
+            exit 1
+          fi
+
+      - name: Apply migrations
+        run: npm run migrate
+
+      - name: Load seed data
+        if: inputs.seed
+        run: |
+          npm run seed
+          npm run worker:cli -- seed-inventory

@@ -1,0 +1,17 @@
+{
+  "name": "@inventory-index/worker",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "tsx src/index.ts schedule",
+    "once": "tsx src/index.ts run-due",
+    "cli": "tsx src/index.ts",
+    "test": "node --import tsx --test --test-reporter=dot \"src/**/*.test.ts\"",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@inventory-index/core": "*",
+    "@inventory-index/db": "*"
+  }
+}

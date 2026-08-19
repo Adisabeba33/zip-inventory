@@ -1,0 +1,29 @@
+{
+  "name": "inventory-index",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Independent Dispensary Inventory Index - an inventory observation index for licensed New York adult-use retailers.",
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "engines": {
+    "node": ">=22.0.0"
+  },
+  "scripts": {
+    "typecheck": "tsc -p tsconfig.json --noEmit && npm run typecheck -w @inventory-index/web",
+    "test": "npm run test --workspaces --if-present",
+    "migrate": "npm run migrate -w @inventory-index/db",
+    "seed": "npm run seed -w @inventory-index/db",
+    "worker": "npm run start -w @inventory-index/worker",
+    "worker:once": "npm run once -w @inventory-index/worker",
+    "web": "npm run dev -w @inventory-index/web",
+    "build": "npm run build -w @inventory-index/web",
+    "worker:cli": "npm run cli -w @inventory-index/worker --"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.2",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2"
+  }
+}
