@@ -199,7 +199,16 @@ async function seed(): Promise<void> {
          parser_adapter, parser_config, automation_status, permission_type, permission_reference,
          allowed_frequency_hours, active, notes
        ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,24,$12,$13)
-       ON CONFLICT DO NOTHING
+       ON CONFLICT (dispensary_id, source_url) DO UPDATE SET
+         source_owner = EXCLUDED.source_owner,
+         parser_adapter = EXCLUDED.parser_adapter,
+         parser_config = EXCLUDED.parser_config,
+         automation_status = EXCLUDED.automation_status,
+         permission_type = EXCLUDED.permission_type,
+         permission_reference = EXCLUDED.permission_reference,
+         active = EXCLUDED.active,
+         notes = EXCLUDED.notes,
+         updated_at = now()
        RETURNING id`,
       [
         dispensaryId,
@@ -218,13 +227,7 @@ async function seed(): Promise<void> {
       ],
     );
 
-    const sourceId =
-      rows[0]?.id ??
-      (
-        await query<{ id: string }>('SELECT id FROM inventory_sources WHERE dispensary_id = $1 LIMIT 1', [
-          dispensaryId,
-        ])
-      ).rows[0]?.id;
+    const sourceId = rows[0]?.id;
 
     if (sourceId && entry.source.reviewed) {
       const allowed = ['APPROVED', 'EXPLICIT_PERMISSION', 'API_LICENSED'].includes(entry.source.automationStatus);

@@ -27,16 +27,29 @@ export async function seedInventory(now = new Date()): Promise<RunOutcome[]> {
     // Harbor Line is seeded stale on purpose, to exercise the stale state.
     const stalenessDays = source.notes?.includes('stale') ? 3 : 0;
 
-    for (let day = 0; day < fixture.days.length; day += 1) {
-      const daysAgo = fixture.days.length - 1 - day + stalenessDays;
-      const observedAt = new Date(now.getTime() - daysAgo * DAY_MS);
+    // Replay day 0 a couple of times well before the labelled days, so the
+    // baseline strains age past the seven-day NEW window. Otherwise every row
+    // on the seeded site carries a badge, which is the opposite of the
+    // intent: a badge should mark the exception, not decorate every line.
+    const warmUpDays = [12, 11, 10];
+    const plan: Array<{ day: number; daysAgo: number; label: string }> = [
+      ...warmUpDays.map((daysAgo) => ({ day: 0, daysAgo: daysAgo + stalenessDays, label: 'warm-up' })),
+      ...fixture.days.map((entry, day) => ({
+        day,
+        daysAgo: fixture.days.length - 1 - day + stalenessDays,
+        label: entry.label,
+      })),
+    ];
+
+    for (const step of plan) {
+      const observedAt = new Date(now.getTime() - step.daysAgo * DAY_MS);
       const outcome = await runSource(source.id, {
         observedAt,
         now: observedAt,
-        parserConfigOverride: { day },
+        parserConfigOverride: { day: step.day },
       });
       outcomes.push(outcome);
-      console.log(`[seed-inventory] ${source.source_url} ${fixture.days[day]?.label}: ${outcome.status} - ${outcome.detail}`);
+      console.log(`[seed-inventory] ${source.source_url} ${step.label}: ${outcome.status} - ${outcome.detail}`);
     }
   }
 
