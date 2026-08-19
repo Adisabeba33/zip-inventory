@@ -1,6 +1,7 @@
 import { closePool, config, sources } from '@inventory-index/db';
 import { runSource } from './pipeline.js';
 import { planDay, runDue, runMaintenance } from './scheduler.js';
+import { importOcmDirectory, importZipCentroids } from './importers/ocmDirectory.js';
 import { seedInventory } from './seedInventory.js';
 
 const USAGE = `
@@ -11,6 +12,8 @@ Inventory observation worker
   run-source <source-id>     Observe one source now (still subject to the gate).
   maintenance                Purge expired raw fetch artifacts.
   seed-inventory             Replay the local fixtures to populate a dev database.
+  import-ocm <file>          Import the licensed retailer directory from a downloaded export.
+  import-zips <file>         Import ZIP centroids (e.g. the Census ZCTA gazetteer).
   schedule                   Long-running loop: run due sources every 15 minutes.
 
 Flags
@@ -67,6 +70,36 @@ async function main(): Promise<number> {
     case 'seed-inventory': {
       const outcomes = await seedInventory();
       console.log(`Replayed ${outcomes.length} fixture observations.`);
+      return 0;
+    }
+
+    case 'import-ocm': {
+      const file = argv[1];
+      if (!file) {
+        console.error('import-ocm needs a path to a directory export downloaded from OCM.');
+        return 2;
+      }
+      const statuses = argv.includes('--status')
+        ? (argv[argv.indexOf('--status') + 1] ?? '').split(',').filter(Boolean)
+        : [];
+      const result = await importOcmDirectory(file, { acceptStatuses: statuses });
+      console.log(
+        `Read ${result.read} rows, imported ${result.imported}, skipped ${result.skipped.length}, ` +
+          `marked ${result.markedInactive} no longer active, used a ZIP centroid for ${result.usedZipCentroid}.`,
+      );
+      for (const skip of result.skipped.slice(0, 20)) console.log(`  row ${skip.row}: ${skip.reason}`);
+      if (result.skipped.length > 20) console.log(`  ...and ${result.skipped.length - 20} more`);
+      return 0;
+    }
+
+    case 'import-zips': {
+      const file = argv[1];
+      if (!file) {
+        console.error('import-zips needs a path to a gazetteer file.');
+        return 2;
+      }
+      const result = await importZipCentroids(file);
+      console.log(`Imported ${result.imported} ZIP centroids, skipped ${result.skipped}.`);
       return 0;
     }
 

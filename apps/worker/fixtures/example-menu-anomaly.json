@@ -1,0 +1,176 @@
+{
+  "note": "Test fixture: a healthy day followed by a day that looks like a parser regression.",
+  "days": [
+    {
+      "label": "day 0 - twenty items",
+      "items": [
+        {
+          "sourceItemId": "a-1",
+          "name": "Test Farms - Strain 01 - 3.5g Flower",
+          "weight": "3.5g",
+          "brand": "Test Farms",
+          "category": "Flower"
+        },
+        {
+          "sourceItemId": "a-2",
+          "name": "Test Farms - Strain 02 - 3.5g Flower",
+          "weight": "3.5g",
+          "brand": "Test Farms",
+          "category": "Flower"
+        },
+        {
+          "sourceItemId": "a-3",
+          "name": "Test Farms - Strain 03 - 3.5g Flower",
+          "weight": "3.5g",
+          "brand": "Test Farms",
+          "category": "Flower"
+        },
+        {
+          "sourceItemId": "a-4",
+          "name": "Test Farms - Strain 04 - 3.5g Flower",
+          "weight": "3.5g",
+          "brand": "Test Farms",
+          "category": "Flower"
+        },
+        {
+          "sourceItemId": "a-5",
+          "name": "Test Farms - Strain 05 - 3.5g Flower",
+          "weight": "3.5g",
+          "brand": "Test Farms",
+          "category": "Flower"
+        },
+        {
+          "sourceItemId": "a-6",
+          "name": "Test Farms - Strain 06 - 3.5g Flower",
+          "weight": "3.5g",
+          "brand": "Test Farms",
+          "category": "Flower"
+        },
+        {
+          "sourceItemId": "a-7",
+          "name": "Test Farms - Strain 07 - 3.5g Flower",
+          "weight": "3.5g",
+          "brand": "Test Farms",
+          "category": "Flower"
+        },
+        {
+          "sourceItemId": "a-8",
+          "name": "Test Farms - Strain 08 - 3.5g Flower",
+          "weight": "3.5g",
+          "brand": "Test Farms",
+          "category": "Flower"
+        },
+        {
+          "sourceItemId": "a-9",
+          "name": "Test Farms - Strain 09 - 3.5g Flower",
+          "weight": "3.5g",
+          "brand": "Test Farms",
+          "category": "Flower"
+        },
+        {
+          "sourceItemId": "a-10",
+          "name": "Test Farms - Strain 10 - 3.5g Flower",
+          "weight": "3.5g",
+          "brand": "Test Farms",
+          "category": "Flower"
+        },
+        {
+          "sourceItemId": "a-11",
+          "name": "Test Farms - Strain 11 - 3.5g Flower",
+          "weight": "3.5g",
+          "brand": "Test Farms",
+          "category": "Flower"
+        },
+        {
+          "sourceItemId": "a-12",
+          "name": "Test Farms - Strain 12 - 3.5g Flower",
+          "weight": "3.5g",
+          "brand": "Test Farms",
+          "category": "Flower"
+        },
+        {
+          "sourceItemId": "a-13",
+          "name": "Test Farms - Strain 13 - 3.5g Flower",
+          "weight": "3.5g",
+          "brand": "Test Farms",
+          "category": "Flower"
+        },
+        {
+          "sourceItemId": "a-14",
+          "name": "Test Farms - Strain 14 - 3.5g Flower",
+          "weight": "3.5g",
+          "brand": "Test Farms",
+          "category": "Flower"
+        },
+        {
+          "sourceItemId": "a-15",
+          "name": "Test Farms - Strain 15 - 3.5g Flower",
+          "weight": "3.5g",
+          "brand": "Test Farms",
+          "category": "Flower"
+        },
+        {
+          "sourceItemId": "a-16",
+          "name": "Test Farms - Strain 16 - 3.5g Flower",
+          "weight": "3.5g",
+          "brand": "Test Farms",
+          "category": "Flower"
+        },
+        {
+          "sourceItemId": "a-17",
+          "name": "Test Farms - Strain 17 - 3.5g Flower",
+          "weight": "3.5g",
+          "brand": "Test Farms",
+          "category": "Flower"
+        },
+        {
+          "sourceItemId": "a-18",
+          "name": "Test Farms - Strain 18 - 3.5g Flower",
+          "weight": "3.5g",
+          "brand": "Test Farms",
+          "category": "Flower"
+        },
+        {
+          "sourceItemId": "a-19",
+          "name": "Test Farms - Strain 19 - 3.5g Flower",
+          "weight": "3.5g",
+          "brand": "Test Farms",
+          "category": "Flower"
+        },
+        {
+          "sourceItemId": "a-20",
+          "name": "Test Farms - Strain 20 - 3.5g Flower",
+          "weight": "3.5g",
+          "brand": "Test Farms",
+          "category": "Flower"
+        }
+      ]
+    },
+    {
+      "label": "day 1 - collapses to three",
+      "items": [
+        {
+          "sourceItemId": "a-1",
+          "name": "Test Farms - Strain 01 - 3.5g Flower",
+          "weight": "3.5g",
+          "brand": "Test Farms",
+          "category": "Flower"
+        },
+        {
+          "sourceItemId": "a-2",
+          "name": "Test Farms - Strain 02 - 3.5g Flower",
+          "weight": "3.5g",
+          "brand": "Test Farms",
+          "category": "Flower"
+        },
+        {
+          "sourceItemId": "a-3",
+          "name": "Test Farms - Strain 03 - 3.5g Flower",
+          "weight": "3.5g",
+          "brand": "Test Farms",
+          "category": "Flower"
+        }
+      ]
+    }
+  ]
+}

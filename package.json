@@ -11,7 +11,7 @@
     "node": ">=22.0.0"
   },
   "scripts": {
-    "typecheck": "tsc -b --pretty",
+    "typecheck": "tsc -p tsconfig.json --noEmit && npm run typecheck -w @inventory-index/web",
     "test": "npm run test --workspaces --if-present",
     "migrate": "npm run migrate -w @inventory-index/db",
     "seed": "npm run seed -w @inventory-index/db",

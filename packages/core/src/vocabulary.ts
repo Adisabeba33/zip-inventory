@@ -39,6 +39,35 @@ export const PROHIBITED_PHRASES: readonly string[] = [
   'delivery',
 ];
 
+/**
+ * The subset that must never appear in user-facing copy in any context, not
+ * even inside a denial. A repository test fails the build on these.
+ *
+ * The wider PROHIBITED_PHRASES list above is advisory: several of those words
+ * appear legitimately in disclaimers ("not affiliated with or sponsored by",
+ * "this service does not process orders"), so it is reported rather than
+ * enforced.
+ */
+export const NEVER_PERMITTED_PHRASES: readonly string[] = [
+  'sold out',
+  'sells out',
+  'in stock',
+  'out of stock',
+  'add to cart',
+  'buy now',
+  'order now',
+  'shop now',
+  'best deal',
+  'cheapest',
+  'promo code',
+  'available for purchase',
+  'best weed',
+  'hottest strains',
+  'must try',
+  'top rated',
+  'featured dispensary',
+];
+
 /** The vocabulary the product does use. */
 export const PREFERRED_PHRASES: readonly string[] = [
   'Currently listed',
@@ -61,9 +90,12 @@ export interface ProhibitedMatch {
  * so "checkout" flags but "check out the data sources page" style prose is
  * matched on the literal phrase only.
  */
-export function findProhibitedPhrases(text: string): ProhibitedMatch[] {
+export function findProhibitedPhrases(
+  text: string,
+  phrases: readonly string[] = PROHIBITED_PHRASES,
+): ProhibitedMatch[] {
   const matches: ProhibitedMatch[] = [];
-  for (const phrase of PROHIBITED_PHRASES) {
+  for (const phrase of phrases) {
     const pattern = new RegExp(`\\b${phrase.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'gi');
     for (const match of text.matchAll(pattern)) {
       const index = match.index ?? 0;
