@@ -103,3 +103,4 @@ These are enforced in code and covered by tests, not left to reviewer discipline
 - [docs/LEGAL-RELEASE-GATES.md](docs/LEGAL-RELEASE-GATES.md) — the pre-launch checklist
 - [docs/SOURCE-POLICY.md](docs/SOURCE-POLICY.md) — how a source is reviewed and approved
 - [docs/OPERATIONS.md](docs/OPERATIONS.md) — running it, importing the directory, opt-outs
+- [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) — deploying the web app to Vercel, database, worker

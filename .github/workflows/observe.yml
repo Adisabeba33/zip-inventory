@@ -1,0 +1,61 @@
+# The daily observation run.
+#
+# The crawler is a separate process from the web app on purpose: a failed or
+# blocked observation must never affect page serving, and a polite run with
+# per-host delays does not fit a serverless function timeout. Running it here
+# keeps that separation without paying for a second host.
+#
+# It does nothing at all until CRAWLER_NETWORK_ENABLED is true and at least one
+# source has a policy review that permits automation.
+name: Observe approved sources
+
+on:
+  schedule:
+    # 07:10 UTC, roughly 03:10 in New York. Individual sources are spread
+    # across their own slots by the scheduler, not all fetched at once.
+    - cron: '10 7 * * *'
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Plan only: report what would be observed without fetching or writing.'
+        type: boolean
+        default: true
+
+jobs:
+  observe:
+    runs-on: ubuntu-latest
+    environment: production
+    # One run at a time. Two concurrent runs would double our request rate
+    # against sources whose allowed frequency we undertook to respect.
+    concurrency:
+      group: observe
+      cancel-in-progress: false
+
+    env:
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      ADMIN_API_TOKEN: ${{ secrets.ADMIN_API_TOKEN }}
+      WEB_REVALIDATE_URL: ${{ vars.WEB_REVALIDATE_URL }}
+      CRAWLER_USER_AGENT: ${{ vars.CRAWLER_USER_AGENT }}
+      CRAWLER_CONTACT_EMAIL: ${{ vars.CRAWLER_CONTACT_EMAIL }}
+      CRAWLER_NETWORK_ENABLED: ${{ vars.CRAWLER_NETWORK_ENABLED }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - name: Show today's plan
+        run: npm run worker:cli -- plan
+
+      - name: Observe sources that are due
+        if: github.event_name == 'schedule' || inputs.dry_run == false
+        run: npm run worker:cli -- run-due
+
+      - name: Purge expired raw fetch artifacts
+        if: always()
+        run: npm run worker:cli -- maintenance

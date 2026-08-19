@@ -49,8 +49,17 @@ function str(name: string, fallback: string): string {
   return value === undefined || value === '' ? fallback : value;
 }
 
+/**
+ * Serverless platforms run many short-lived instances, each with its own pool.
+ * A generous pool size that is fine for one long-running server will exhaust a
+ * managed Postgres connection limit there, so the default drops when we detect
+ * one. Point DATABASE_URL at a pooled endpoint (PgBouncer) on those platforms.
+ */
+const isServerless = Boolean(process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME);
+
 export const config = {
   databaseUrl: str('DATABASE_URL', 'postgres://postgres:postgres@localhost:5432/inventory_index'),
+  databasePoolMax: int('DATABASE_POOL_MAX', isServerless ? 2 : 10),
 
   serviceName: str('SERVICE_NAME', 'Inventory Index'),
   servicePublicUrl: str('SERVICE_PUBLIC_URL', 'http://localhost:3000'),

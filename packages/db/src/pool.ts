@@ -11,7 +11,14 @@ let pool: pg.Pool | null = null;
 
 export function getPool(): pg.Pool {
   if (!pool) {
-    pool = new Pool({ connectionString: config.databaseUrl, max: 10 });
+    pool = new Pool({
+      connectionString: config.databaseUrl,
+      max: config.databasePoolMax,
+      // Managed Postgres closes idle connections; do not hold them open longer
+      // than the platform will tolerate.
+      idleTimeoutMillis: 10_000,
+      connectionTimeoutMillis: 10_000,
+    });
     pool.on('error', (error) => {
       console.error('[db] idle client error', error);
     });
