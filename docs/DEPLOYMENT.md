@@ -9,7 +9,7 @@ Vercel runs the **web app only**. Two other things live elsewhere:
 | Piece | Where | Why |
 | --- | --- | --- |
 | Web app, public API, admin | Vercel | Ordinary Next.js app |
-| PostgreSQL | Neon (or Supabase) | Vercel does not host a database itself |
+| PostgreSQL | Neon, Supabase, or any managed Postgres | Vercel does not host a database itself |
 | Observation worker | GitHub Actions (`.github/workflows/observe.yml`) | A polite crawl with per-host delays does not fit a serverless timeout, and a crawler failure must not touch page serving |
 
 ## Before you start
@@ -31,16 +31,28 @@ the data is seeded example data and counsel has not reviewed anything.
 changing one is meant to be a deliberate deployment, not a toggle. After changing any
 environment variable, redeploy.
 
-## 1. Create the database (Neon)
+## 1. Create the database
 
-From the phone browser:
+Any managed PostgreSQL works. The app talks plain SQL through the `pg` driver — no ORM, no
+vendor client library — so nothing here is tied to a particular provider, and moving between
+them later is a change of connection string.
 
-1. In the Vercel dashboard, open your project once it exists (or go to neon.tech directly).
-2. Storage → Create Database → Neon (Postgres). The free tier is enough.
-3. Copy the **pooled** connection string — the one whose host contains `-pooler`. Serverless
-   runs many short-lived instances, and the unpooled endpoint will run out of connections.
+**Neon** and **Supabase** are both fine on their free tiers. Pick on this basis:
 
-Supabase works the same way; use its connection pooler string on port `6543`.
+- Already have an account with one? Use that one.
+- Neither? Neon is marginally less setup, because Vercel's marketplace integration creates the
+  database and sets `DATABASE_URL` on the project for you.
+- Supabase brings auth, storage and a REST layer that this project does not use. That is not a
+  drawback, just unused surface.
+
+Whichever you choose, you need **two** connection strings, and they are not interchangeable:
+
+| Use | Which string | Why |
+| --- | --- | --- |
+| The app (`DATABASE_URL` on Vercel) | **Pooled** — Neon: host contains `-pooler`. Supabase: port `6543` | Serverless runs many short-lived instances, each opening its own connections. The direct endpoint runs out |
+| Migrations (`DATABASE_URL` secret in GitHub) | **Direct** — Neon: host without `-pooler`. Supabase: port `5432` | Schema changes want a real session, not a transaction-pooled one |
+
+Copy both now; you will paste them in different places in steps 3 and 4.
 
 ## 2. Import the project into Vercel
 
@@ -61,10 +73,10 @@ Variables), for Production and Preview:
 
 | Variable | Value |
 | --- | --- |
-| `DATABASE_URL` | The pooled Neon connection string |
+| `DATABASE_URL` | The **pooled** connection string from step 1 |
 | `ADMIN_API_TOKEN` | A long random string — 32+ characters |
 | `SERVICE_NAME` | Whatever the service is called |
-| `SERVICE_PUBLIC_URL` | `https://your-domain` (or the `.vercel.app` URL for now) |
+| `SERVICE_PUBLIC_URL` | The free `https://<project>.vercel.app` URL |
 | `PUBLIC_LAUNCH_ENABLED` | `false` |
 | `PUBLIC_INDEXING_ENABLED` | `false` |
 | `AGE_GATE_ENABLED` | `true` |
@@ -85,7 +97,7 @@ The schema is not created by the Vercel build. Run it once from GitHub, which wo
 mobile browser:
 
 1. In the GitHub repo → Settings → Secrets and variables → Actions → New repository secret:
-   `DATABASE_URL`, same pooled string.
+   `DATABASE_URL` — here use the **direct** string, not the pooled one.
 2. Actions tab → **Migrate database** → Run workflow.
 3. Tick "Also load development seed data" only if you want the invented example retailers to
    look at. Never tick it against a database that holds real directory data.
@@ -98,19 +110,24 @@ build, go to Deployments → the latest one → Redeploy.
 Check `https://<your-url>/api/health` — it should return `status: ok`. If it returns
 `degraded`, the database URL is wrong or the schema has not been created.
 
-## 6. Custom domain
+## 6. The address
 
-Vercel project → Settings → Domains → Add. Then either:
+**You do not need to buy a domain.** Vercel gives every project a free
+`https://<project-name>.vercel.app` address as soon as it deploys, and that is the right
+address for this stage: a staging URL, behind deployment protection, while the release gates
+are closed. Set `SERVICE_PUBLIC_URL` to it and redeploy.
 
-- **Domain bought at Vercel**: nothing else to do.
-- **Domain elsewhere**: add the DNS records Vercel shows you (an `A` record for the apex, a
-  `CNAME` for `www`) in your registrar's control panel. Most registrar panels work on a phone.
+The project name is editable in Settings → General if the generated one is ugly, and the
+`.vercel.app` address follows it.
 
-Then set `SERVICE_PUBLIC_URL` to the new domain and redeploy, so the sitemap and canonical
-URLs match.
+A custom domain is a later decision, and it belongs after the legal review rather than before
+it — a real domain reads as a launch in a way a `.vercel.app` URL does not. When you do want
+one: Settings → Domains → Add, then either buy it through Vercel (nothing further to do) or
+add the `A` and `CNAME` records Vercel shows you at your registrar. Afterwards update
+`SERVICE_PUBLIC_URL` and redeploy so the sitemap and canonical URLs match.
 
-While the release gates are closed, the domain will serve a `robots.txt` that disallows
-everything. That is intended.
+Either way, while the release gates are closed the address serves a `robots.txt` that
+disallows everything. That is intended.
 
 ## 7. The worker (only when there is something to observe)
 
@@ -135,7 +152,7 @@ whole point of an identifiable crawler.
 
 ## Cost
 
-Vercel Hobby, Neon free tier and GitHub Actions free minutes cover this comfortably at MVP
+Vercel Hobby, a free Postgres tier and GitHub Actions free minutes cover this comfortably at MVP
 scale. Note that Vercel's Hobby plan is for non-commercial use; if the service ever earns
 money, that needs a Pro plan — and by then the monetisation question has had its own legal
 review anyway.
