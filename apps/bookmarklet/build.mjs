@@ -36,11 +36,14 @@ await writeFile(join(DIST, 'bookmarklet.js'), code, 'utf8');
 await writeFile(join(DIST, 'bookmarklet.url.txt'), url, 'utf8');
 
 const template = await readFile(join(HERE, 'src', 'install.template.html'), 'utf8');
-await writeFile(
-  join(DIST, 'install.html'),
-  template.replace('__BOOKMARKLET_URL__', url.replace(/"/g, '&quot;')),
-  'utf8',
-);
+// replaceAll, not replace: the placeholder appears in both the drag target and
+// the copy box, and replacing only the first left the copy box handing out the
+// literal placeholder.
+const installed = template.replaceAll('__BOOKMARKLET_URL__', url.replace(/"/g, '&quot;'));
+if (installed.includes('__BOOKMARKLET_URL__')) {
+  throw new Error('A __BOOKMARKLET_URL__ placeholder survived into the install page.');
+}
+await writeFile(join(DIST, 'install.html'), installed, 'utf8');
 
 const kb = (n) => `${(n / 1024).toFixed(1)} kB`;
 console.log(`bundle   ${kb(code.length)}`);
