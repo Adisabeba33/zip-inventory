@@ -131,6 +131,31 @@ const EDGE_NOISE = new Set([
   'wt',
 ]);
 
+/**
+ * Growing-method and packaging phrases that trail a cultivar name. Word-by-word
+ * trimming cannot remove these: "Grown" and "Jar" are not noise on their own,
+ * only in these phrases. Taken from real menus.
+ */
+const EDGE_PHRASES: readonly string[] = [
+  'sun grown',
+  'sungrown',
+  'sun-grown',
+  'light dep',
+  'mixed light',
+  'greenhouse grown',
+  'indoor grown',
+  'living soil',
+  'baller jar',
+  'small buds',
+  'whole flower',
+  'ground flower',
+  'pre ground',
+  'pre-ground',
+  'top shelf',
+  'net wt',
+  'net weight',
+];
+
 const SEGMENT_SPLIT = /\s+[-\u2013\u2014|\u2022\u00b7]+\s+|\s*\|\s*|::|\s+\/\s+/;
 
 function decodeEntities(text: string): string {
@@ -197,8 +222,27 @@ function isNoiseSegment(segment: string): boolean {
   return words.length > 0 && words.every((word) => NOISE_WORDS.has(word) || EDGE_NOISE.has(word));
 }
 
+function stripEdgePhrases(segment: string): string {
+  let text = segment.trim();
+  let changed = true;
+  while (changed) {
+    changed = false;
+    for (const phrase of EDGE_PHRASES) {
+      const pattern = new RegExp(`(?:^${phrase}\\b|\\b${phrase}$)`, 'i');
+      const next = text.replace(pattern, ' ').replace(/\s+/g, ' ').trim();
+      // Only if something is left: a segment that is nothing but the phrase is
+      // handled as a noise segment, not trimmed down to nothing here.
+      if (next !== text && next.length > 0) {
+        text = next;
+        changed = true;
+      }
+    }
+  }
+  return text;
+}
+
 function trimEdgeNoise(segment: string): string {
-  let words = segment.split(/\s+/).filter(Boolean);
+  let words = stripEdgePhrases(segment).split(/\s+/).filter(Boolean);
   const isNoise = (word: string) => EDGE_NOISE.has(normalizeForCompare(word));
   while (words.length > 1 && isNoise(words[0] as string)) words = words.slice(1);
   while (words.length > 1 && isNoise(words[words.length - 1] as string)) words = words.slice(0, -1);

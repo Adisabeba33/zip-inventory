@@ -32,7 +32,23 @@ describe('classifyProduct', () => {
     assert.match(result.reason, /source category/);
   });
 
-  it('does not exclude a cultivar that merely contains a weak keyword', () => {
+  it('excludes product classes that a menu still files under flower', () => {
+    // All three were listed under Flower on a live Dutchie menu, and none of
+    // them is plain flower.
+    for (const title of [
+      'Moonrocks Blueberry Muffin Baller Jar',
+      'Hickory Hash',
+      'Infused Pre-Ground',
+    ]) {
+      assert.equal(
+        classifyProduct(title, { category: 'Flower' }).productType,
+        'EXCLUDED',
+        `${title} should not count as flower`,
+      );
+    }
+  });
+
+  it('keeps Hash Plant, which is a cultivar rather than a concentrate', () => {
     assert.equal(classifyProduct('Hash Plant 3.5g Flower', { category: 'Flower' }).productType, 'FLOWER');
   });
 

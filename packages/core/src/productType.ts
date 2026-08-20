@@ -24,6 +24,12 @@ const STRONG_EXCLUSIONS: ReadonlyArray<[RegExp, string]> = [
   [/\btopicals?\b|\bbalms?\b|\blotions?\b|\bsalves?\b|\bcreams?\s+\d|\btransdermal\b|\bpatch(?:es)?\b/i, 'topical'],
   [/\baccessor(?:y|ies)\b|\bmerch(?:andise)?\b|\bapparel\b|\bgrinders?\b|\blighters?\b|\brolling\s+papers?\b|\btrays?\b|\bbatter(?:y|ies)\b|\bpipes?\b|\bbongs?\b|\bt-?shirts?\b|\bhats?\b|\bstickers?\b/i, 'accessory'],
   [/\bseeds?\b|\bclones?\b|\bplants?\s+for\s+sale\b/i, 'plant material'],
+  // Flower coated in or blended with concentrate is a different product class,
+  // whatever the menu files it under.
+  [/\bmoon\s?rocks?\b|\bcaviar\b|\bsun\s?rocks?\b/i, 'moonrock'],
+  [/\binfused\b/i, 'infused product'],
+  // Hash is a concentrate. "Hash Plant" is a cultivar, hence the exception.
+  [/\bhash\b(?!\s*plant)|\bhashish\b/i, 'hash'],
 ];
 
 /**
@@ -32,7 +38,6 @@ const STRONG_EXCLUSIONS: ReadonlyArray<[RegExp, string]> = [
  * the text says "flower".
  */
 const WEAK_EXCLUSIONS: ReadonlyArray<[RegExp, string]> = [
-  [/\bhash\b(?!\s*plant)/i, 'hash'],
   [/\bkief\b|\bkif\b/i, 'kief'],
   [/\bresin\b/i, 'resin'],
   [/\bwax\b/i, 'wax'],

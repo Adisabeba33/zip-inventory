@@ -37,6 +37,23 @@ describe('canonicalizeStrainName', () => {
     assert.equal(canonicalizeStrainName('Gelato - Whole Flower - 14g').subtype, 'WHOLE_FLOWER');
   });
 
+  it('strips growing-method and packaging phrases seen on real menus', () => {
+    // These came off a live Dutchie menu. Word-by-word trimming could not
+    // remove them: "Grown" and "Jar" are not noise on their own.
+    assert.equal(canonicalizeStrainName('Beary White Sun Grown').canonicalName, 'Beary White');
+    assert.equal(canonicalizeStrainName('Grapple Pie Sun Grown').canonicalName, 'Grapple Pie');
+    assert.equal(
+      canonicalizeStrainName('Ice Cream Cake x Grape Gas Sun Grown').canonicalName,
+      'Ice Cream Cake x Grape Gas',
+    );
+    assert.equal(canonicalizeStrainName('Blue Dream Small Buds').canonicalName, 'Blue Dream');
+    assert.equal(canonicalizeStrainName('Gelato 41 Top Shelf').canonicalName, 'Gelato 41');
+  });
+
+  it('leaves a cross alone', () => {
+    assert.equal(canonicalizeStrainName('Soap x Purple Punch').canonicalName, 'Soap x Purple Punch');
+  });
+
   it('never rewrites the cultivar itself', () => {
     // GG4 must not become "Gorilla Glue #4" without a verified alias.
     assert.equal(canonicalizeStrainName('GG4 - 28g').canonicalName, 'GG4');
