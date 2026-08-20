@@ -6,7 +6,7 @@
  * nothing leaves the page.
  */
 
-import { BLOCK_BOUNDARY } from '@inventory-index/core/menuText';
+import { BLOCK_BOUNDARY } from '@inventory-index/core/browser';
 
 const SKIP_TAGS = new Set([
   'SCRIPT', 'STYLE', 'NOSCRIPT', 'SVG', 'PATH', 'CANVAS', 'IFRAME',

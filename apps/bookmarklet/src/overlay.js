@@ -1,4 +1,4 @@
-import { WEIGHT_PRESENTATION } from '@inventory-index/core/types';
+import { WEIGHT_PRESENTATION } from '@inventory-index/core/browser';
 
 /**
  * The panel that shows the result.

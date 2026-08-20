@@ -1,4 +1,4 @@
-import { parseMenuLines } from '@inventory-index/core/menuText';
+import { parseMenuLines } from '@inventory-index/core/browser';
 import { collectLines, collectSelection } from './collect.js';
 import { renderPanel } from './overlay.js';
 
