@@ -99,6 +99,9 @@ These are enforced in code and covered by tests, not left to reviewer discipline
 
 ## Documentation
 
+- **[docs/HANDOFF.md](docs/HANDOFF.md) — read this first.** Where the project
+  stands, what was decided and why, what was tried and rejected, and what is
+  open. The rest of these describe the code; that one describes the thinking.
 - [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) — how the pieces fit and how data flows
 - [docs/LEGAL-RELEASE-GATES.md](docs/LEGAL-RELEASE-GATES.md) — the pre-launch checklist
 - [docs/SOURCE-POLICY.md](docs/SOURCE-POLICY.md) — how a source is reviewed and approved
