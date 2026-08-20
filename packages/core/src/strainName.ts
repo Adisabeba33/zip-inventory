@@ -179,6 +179,14 @@ function normalizeForCompare(text: string): string {
     .trim();
 }
 
+/**
+ * True when a line is made only of packaging, tier and category words -
+ * "Sativa", "Indoor Flower", "Top Shelf". Never a cultivar on its own.
+ */
+export function isPackagingNoise(text: string): boolean {
+  return isNoiseSegment(text);
+}
+
 function isNoiseSegment(segment: string): boolean {
   const stripped = stripWeightTokens(segment);
   const compare = normalizeForCompare(stripped).replace(/[.]/g, '');

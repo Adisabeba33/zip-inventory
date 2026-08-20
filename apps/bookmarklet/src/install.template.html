@@ -1,0 +1,115 @@
+<title>Strain Reader</title>
+<style>
+  :root {
+    --ground:#fbfbf9; --surface:#fff; --sunken:#f4f3ef; --text:#1b1b19; --muted:#64645d;
+    --faint:#8a8a82; --border:#e2e1da; --strong:#c9c8bf; --accent:#33506b; --ink:#fff;
+    --warn-bg:#fbf6e9; --warn-border:#e3d5a8;
+    --sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ground:#16161a; --surface:#1d1d21; --sunken:#232328; --text:#ececea; --muted:#a3a39c;
+      --faint:#7d7d76; --border:#32323a; --strong:#45454f; --accent:#9db8d4; --ink:#14202b;
+      --warn-bg:#2a2618; --warn-border:#4e452a;
+    }
+  }
+  :root[data-theme="dark"] {
+    --ground:#16161a; --surface:#1d1d21; --sunken:#232328; --text:#ececea; --muted:#a3a39c;
+    --faint:#7d7d76; --border:#32323a; --strong:#45454f; --accent:#9db8d4; --ink:#14202b;
+    --warn-bg:#2a2618; --warn-border:#4e452a;
+  }
+  *,*::before,*::after{box-sizing:border-box}
+  body{margin:0;background:var(--ground);color:var(--text);font-family:var(--sans);font-size:16px;line-height:1.55}
+  .page{max-width:44rem;margin:0 auto;padding:2rem 1.25rem 4rem}
+  h1{font-size:1.6rem;margin:0 0 .4rem;letter-spacing:-.01em;text-wrap:balance}
+  h2{font-size:1.05rem;margin:2rem 0 .5rem}
+  p{margin:0 0 .8rem}
+  .lede{color:var(--muted);max-width:34rem}
+  a{color:var(--accent);text-underline-offset:2px}
+  ol,ul{padding-left:1.2rem;margin:0 0 .8rem}
+  li{margin-bottom:.35rem}
+  code,.mono{font-family:var(--mono);font-size:.86em}
+  .drag{
+    display:inline-block;background:var(--accent);color:var(--ink);border:1px solid var(--accent);
+    border-radius:3px;padding:.6rem 1.1rem;font-weight:600;text-decoration:none;cursor:grab;
+  }
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:3px;padding:1rem 1.1rem;margin:1rem 0}
+  .notice{background:var(--sunken);border:1px solid var(--border);border-left:3px solid var(--strong);
+    border-radius:3px;padding:.8rem 1rem;font-size:.86rem;color:var(--muted)}
+  .notice--warn{background:var(--warn-bg);border-left-color:var(--warn-border)}
+  .small{font-size:.85rem}
+  .faint{color:var(--faint)}
+  textarea{
+    width:100%;min-height:7rem;font-family:var(--mono);font-size:.72rem;line-height:1.4;
+    background:var(--sunken);color:var(--text);border:1px solid var(--strong);border-radius:3px;padding:.6rem;
+    overflow-wrap:anywhere;
+  }
+  button{font:inherit;font-size:.9rem;cursor:pointer;background:var(--surface);color:var(--text);
+    border:1px solid var(--strong);border-radius:3px;padding:.5rem .9rem}
+  :focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+</style>
+
+<div class="page">
+  <h1>Strain Reader</h1>
+  <p class="lede">A bookmark that reads the dispensary menu already open in your browser and gives you the strain names, grouped by package size, one per line.</p>
+
+  <div class="notice">
+    It runs entirely inside the page you are looking at. It makes no network request, uploads nothing and stores nothing. The only thing that leaves is what you choose to put on your own clipboard.
+  </div>
+
+  <h2>Install on a computer</h2>
+  <ol>
+    <li>Show the bookmarks bar — <code>Ctrl+Shift+B</code>, or <code>⌘+Shift+B</code> on a Mac.</li>
+    <li>Drag this button onto it:</li>
+  </ol>
+  <p><a class="drag" href="__BOOKMARKLET_URL__">Read strains</a></p>
+  <p class="small faint">Dragging is the only way that works — clicking it here does nothing, because there is no menu on this page to read.</p>
+
+  <h2>Install on a phone</h2>
+  <p>iOS Safari and Firefox on Android can both do this, it is just fiddlier:</p>
+  <ol>
+    <li>Copy the code from the box below.</li>
+    <li>Bookmark any page — this one will do.</li>
+    <li>Edit that bookmark, rename it <strong>Read strains</strong>, and replace its address with what you copied.</li>
+  </ol>
+  <p><textarea id="code" readonly onclick="this.select()">__BOOKMARKLET_URL__</textarea></p>
+  <p><button id="copy">Copy the code</button> <span id="status" class="small faint" role="status" aria-live="polite"></span></p>
+
+  <h2>Using it</h2>
+  <ol>
+    <li>Open a dispensary's flower menu.</li>
+    <li><strong>Scroll to the bottom.</strong> Most menus load as you scroll, and it can only read what the page has actually loaded.</li>
+    <li>Tap the <strong>Read strains</strong> bookmark.</li>
+    <li>Copy one package size, or all of them.</li>
+  </ol>
+  <p>Highlighting some text first reads only that. Highlight nothing and it reads the whole page.</p>
+
+  <h2>What it does with what it finds</h2>
+  <ul>
+    <li>Keeps flower only — pre-rolls, vapes, edibles, concentrates and accessories are dropped.</li>
+    <li>Sorts into the four standard sizes: 1/8, 1/4, 1/2 and 1 oz. Anything else is set aside rather than forced into the nearest one.</li>
+    <li>Strips producer, price, potency and packaging words, and never rewrites the cultivar itself.</li>
+    <li>Shows one row per strain per size, with a count when the same strain is listed by more than one producer.</li>
+    <li>Lists every line it did not use, with the reason. Nothing disappears quietly.</li>
+  </ul>
+
+  <div class="notice notice--warn">
+    <strong>It will not get everything.</strong> Menus differ, and some are drawn in ways plain text cannot describe. Treat the result as a first pass to check, not as a finished list — that is exactly why the <em>Set aside</em> section exists.
+  </div>
+</div>
+
+<script>
+  document.getElementById('copy').addEventListener('click', async () => {
+    const status = document.getElementById('status');
+    const code = document.getElementById('code');
+    try {
+      await navigator.clipboard.writeText(code.value);
+      status.textContent = 'Copied. Now paste it into a bookmark address.';
+    } catch {
+      code.select();
+      status.textContent = 'Selected — copy it with your keyboard or the menu.';
+    }
+    setTimeout(() => { status.textContent = ''; }, 5000);
+  });
+</script>

@@ -8,6 +8,7 @@ export * from './checksum.js';
 export * from './anomaly.js';
 export * from './status.js';
 export * from './diff.js';
+export * from './menuText.js';
 export * from './freshness.js';
 export * from './vocabulary.js';
 export * from './gate.js';

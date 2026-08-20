@@ -144,3 +144,6 @@ vite.config.ts.timestamp-*
 
 # Local Postgres data / scratch
 *.local
+
+# Built bookmarklet (regenerate with: npm run build -w @inventory-index/bookmarklet)
+apps/bookmarklet/dist/
