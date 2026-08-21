@@ -6,7 +6,8 @@
       "@inventory-index/core": ["./packages/core/src/index.ts"],
       "@inventory-index/core/*": ["./packages/core/src/*"],
       "@inventory-index/db": ["./packages/db/src/index.ts"],
-      "@inventory-index/db/*": ["./packages/db/src/*"]
+      "@inventory-index/db/*": ["./packages/db/src/*"],
+      "@inventory-index/worker/*": ["./apps/worker/src/*"]
     },
     "baseUrl": "."
   },
@@ -14,6 +15,7 @@
     "packages/core/src/**/*.ts",
     "packages/db/src/**/*.ts",
     "packages/db/seed/**/*.ts",
-    "apps/worker/src/**/*.ts"
+    "apps/worker/src/**/*.ts",
+    "apps/probe/src/**/*.ts"
   ]
 }

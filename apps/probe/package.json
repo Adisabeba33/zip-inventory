@@ -1,0 +1,20 @@
+{
+  "name": "@inventory-index/probe",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "probe": "tsx src/index.ts",
+    "install-browser": "playwright install chromium",
+    "typecheck": "tsc --noEmit",
+    "test": "echo 'measurement tool; correctness lives in core and is tested there'"
+  },
+  "dependencies": {
+    "@inventory-index/core": "*",
+    "@inventory-index/worker": "*"
+  },
+  "devDependencies": {
+    "esbuild": "^0.28.2",
+    "playwright": "^1.48.0"
+  }
+}

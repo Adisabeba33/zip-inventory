@@ -19,7 +19,8 @@
     "worker:once": "npm run once -w @inventory-index/worker",
     "web": "npm run dev -w @inventory-index/web",
     "build": "npm run build -w @inventory-index/web",
-    "worker:cli": "npm run cli -w @inventory-index/worker --"
+    "worker:cli": "npm run cli -w @inventory-index/worker --",
+    "probe": "npm run probe -w @inventory-index/probe --"
   },
   "devDependencies": {
     "@types/node": "^22.10.2",
