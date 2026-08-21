@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "probe": "tsx src/index.ts",
+    "serve": "tsx src/server.ts",
     "install-browser": "playwright install chromium",
     "typecheck": "tsc --noEmit",
     "test": "echo 'measurement tool; correctness lives in core and is tested there'"

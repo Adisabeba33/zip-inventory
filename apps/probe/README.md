@@ -52,6 +52,42 @@ npm run probe -- "https://a/menu" "https://b/menu" "https://c/menu" --json probe
 - **lines set aside** — every unused line, grouped by reason. Nothing is dropped
   quietly, so a low strain count can be diagnosed rather than guessed at.
 
+## Running it as the reader Soma calls
+
+The same code, as a service instead of a command:
+
+```bash
+MENU_RENDER_TOKEN=$(openssl rand -hex 24) npm run reader
+```
+
+```
+POST /read   {"url": "https://..."}   ->  {finalUrl, lines, bytes, durationMs}
+                                      ->  {error, message}  on any refusal
+GET  /health                          ->  {ok, inFlight}
+```
+
+Then point Soma at it, in its `.env`:
+
+```
+MENU_RENDER_URL="http://127.0.0.1:8390/read"
+MENU_RENDER_TOKEN="the same token"
+```
+
+| Variable | Default | What it does |
+| --- | --- | --- |
+| `PORT` / `HOST` | `8390` / `127.0.0.1` | Where it listens. Localhost by default on purpose |
+| `MENU_RENDER_TOKEN` | none | Required in the Authorization header when set |
+| `MENU_RENDER_CONCURRENCY` | `2` | Reads at once. More than a few and a laptop starts swapping |
+| `PROBE_CHROMIUM` | none | An existing Chromium instead of Playwright's |
+
+It keeps one browser alive between requests, because launching Chromium costs
+about a second and a menu takes ten. Each read still gets a fresh context: the
+cookies a dispensary sets for one visitor have no business following the next.
+
+It is never told who asked. No user, no profile, no session reaches it, and it
+stores nothing — which is what makes it safe to run on a shelf at home. Bind it
+to localhost and reach it through a tunnel; do not put it on the open internet.
+
 ## What it will not do
 
 Nothing here disguises the client, solves a challenge, rotates an address or

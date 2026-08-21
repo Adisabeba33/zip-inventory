@@ -1,47 +1,21 @@
 /**
- * Menu render probe - does opening a menu page in a real browser get us the
- * strains, and what does doing so cost?
+ * Menu render probe - does opening a menu in a real browser get us the strains,
+ * and what does doing so cost?
  *
- * This is a measurement tool, not a product surface. It answers the four
- * questions the render decision hangs on, per URL:
- *
- *   1. Does robots.txt permit reading this path at all?
- *   2. Does the site serve us the menu, or an access control page?
- *   3. How many strains come back, and how many lines were set aside?
- *   4. How many bytes crossed the wire - the number that drives the bill on
- *      every render service that charges for traffic.
- *
- * It reuses the bookmarklet's collector and core's parser unchanged, so a good
- * result here is evidence about the real pipeline rather than about this file.
- *
- * Nothing here disguises the client, solves a challenge, rotates an address or
- * works around robots.txt, and no flag turns any of that on. A page that will
- * not let us in is a finding, not a problem to route around.
+ * A measurement tool. The reading is done by src/read.ts, which is the same
+ * code the render service runs, and the parsing by core, which is the same code
+ * the bookmarklet and Soma run. What this file adds is the report: the strains
+ * by package size, every line set aside with its reason, and the bytes that
+ * turn into money on a service that bills for traffic.
  */
 import { writeFile } from 'node:fs/promises';
-import { dirname, join } from 'node:path';
-import { fileURLToPath } from 'node:url';
-import * as esbuild from 'esbuild';
-import { chromium, type Page } from 'playwright';
 import {
   CANONICAL_WEIGHTS,
   WEIGHT_PRESENTATION,
   parseMenuLines,
   type CanonicalWeight,
 } from '@inventory-index/core/browser';
-import { checkRobots, detectChallenge } from '@inventory-index/worker/http';
-
-const HERE = dirname(fileURLToPath(import.meta.url));
-
-/**
- * How we introduce ourselves. Appended to the browser's own string rather than
- * replacing it, so the page still gets an accurate description of the engine
- * that is about to render it, plus an honest note about who asked.
- */
-const PROBE_TOKEN = 'SomaMenuProbe/0.1 (menu-reading measurement; one page per run)';
-
-/** Resource kinds a strain list never needs. Dropping them is the cost lever. */
-const HEAVY_RESOURCES = new Set(['image', 'media', 'font']);
+import { MenuReadError, MenuReader } from './read.js';
 
 interface Options {
   urls: string[];
@@ -52,9 +26,7 @@ interface Options {
   timeoutMs: number;
   userAgent: string | null;
   jsonPath: string | null;
-  /** An existing Chromium, when you would rather not have Playwright fetch one. */
   browserPath: string | null;
-  /** Put every collected line in the JSON, for diagnosing a menu that reads badly. */
   dumpLines: boolean;
 }
 
@@ -62,11 +34,13 @@ interface Report {
   url: string;
   ok: boolean;
   stoppedBecause: string | null;
-  robots: { allowed: boolean; detail: string; crawlDelaySeconds: number | null };
-  http: { status: number | null; finalUrl: string | null };
-  challenge: string | null;
+  failureCode: string | null;
+  robotsDetail: string | null;
+  httpStatus: number | null;
+  finalUrl: string | null;
+  title: string;
   transfer: { bytes: number; requests: number; blockedRequests: number; blockingEnabled: boolean };
-  render: { scrollRounds: number; heightPx: number; domNodes: number; title: string; durationMs: number };
+  render: { scrollRounds: number; heightPx: number; domNodes: number; durationMs: number };
   collectedLines: number;
   parsed: {
     /** Listings seen, before same-cultivar rows are collapsed. */
@@ -132,178 +106,86 @@ function parseArgs(argv: string[]): Options {
   return options;
 }
 
-/**
- * Bundle the collector into one expression.
- *
- * It goes in through page.evaluate rather than a script tag on purpose: a menu
- * site's content security policy will refuse an injected tag, and failing on
- * that would tell us about CSP rather than about whether the menu is readable.
- */
-async function buildCollector(): Promise<string> {
-  const result = await esbuild.build({
-    entryPoints: [join(HERE, 'collector-entry.js')],
-    bundle: true,
-    format: 'iife',
-    globalName: '__somaProbe',
-    target: ['es2020'],
-    platform: 'browser',
-    legalComments: 'none',
-    write: false,
-  });
-  const file = result.outputFiles[0];
-  if (!file) throw new Error('esbuild produced no output');
-  return file.text;
-}
-
-/** Scroll until the page stops growing. Menus lazy-load; a static read sees a third of one. */
-async function scrollToEnd(page: Page, options: Options): Promise<number> {
-  let rounds = 0;
-  let stable = 0;
-  let lastHeight = -1;
-
-  while (rounds < options.maxScrolls && stable < 3) {
-    await page.evaluate('window.scrollTo(0, document.body.scrollHeight)');
-    await page.waitForTimeout(options.settleMs);
-    const height = (await page.evaluate('document.body ? document.body.scrollHeight : 0')) as number;
-    rounds += 1;
-    if (height === lastHeight) stable += 1;
-    else stable = 0;
-    lastHeight = height;
-  }
-  // Back to the top so anything that only renders in view has been in view.
-  await page.evaluate('window.scrollTo(0, 0)');
-  await page.waitForTimeout(500);
-  return rounds;
-}
-
-async function probeUrl(url: string, options: Options, collector: string): Promise<Report> {
-  const report: Report = {
+function emptyReport(url: string, blockingEnabled: boolean): Report {
+  return {
     url,
     ok: false,
     stoppedBecause: null,
-    robots: { allowed: false, detail: 'not checked', crawlDelaySeconds: null },
-    http: { status: null, finalUrl: null },
-    challenge: null,
-    transfer: { bytes: 0, requests: 0, blockedRequests: 0, blockingEnabled: options.blockHeavy },
-    render: { scrollRounds: 0, heightPx: 0, domNodes: 0, title: '', durationMs: 0 },
+    failureCode: null,
+    robotsDetail: null,
+    httpStatus: null,
+    finalUrl: null,
+    title: '',
+    transfer: { bytes: 0, requests: 0, blockedRequests: 0, blockingEnabled },
+    render: { scrollRounds: 0, heightPx: 0, domNodes: 0, durationMs: 0 },
     collectedLines: 0,
     parsed: null,
   };
+}
 
-  const browser = await chromium.launch({
-    headless: !options.headed,
-    ...(options.browserPath ? { executablePath: options.browserPath } : {}),
-  });
+async function probeUrl(url: string, options: Options, reader: MenuReader): Promise<Report> {
+  const report = emptyReport(url, options.blockHeavy);
+
+  let read;
   try {
-    // Ask the browser what it calls itself, then add our note to it.
-    const scratch = await browser.newContext();
-    const scratchPage = await scratch.newPage();
-    const defaultUserAgent = (await scratchPage.evaluate('navigator.userAgent')) as string;
-    await scratch.close();
-    const userAgent = options.userAgent ?? `${defaultUserAgent} ${PROBE_TOKEN}`;
-
-    // robots.txt first. If it says no, we do not open the page - that is the
-    // whole answer for this URL and there is no flag to override it.
-    const robots = await checkRobots(url, { userAgent });
-    report.robots = {
-      allowed: robots.allowed,
-      detail: robots.detail,
-      crawlDelaySeconds: robots.crawlDelaySeconds,
-    };
-    if (!robots.allowed) {
-      report.stoppedBecause = 'robots.txt does not permit reading this path';
+    read = await reader.read(url);
+  } catch (error) {
+    if (error instanceof MenuReadError) {
+      report.stoppedBecause = error.message;
+      report.failureCode = error.code;
       return report;
     }
-
-    const context = await browser.newContext({ userAgent, viewport: { width: 1280, height: 900 } });
-    const page = await context.newPage();
-
-    if (options.blockHeavy) {
-      await context.route('**/*', (route) => {
-        if (HEAVY_RESOURCES.has(route.request().resourceType())) {
-          report.transfer.blockedRequests += 1;
-          return route.abort();
-        }
-        return route.continue();
-      });
-    }
-
-    // Bytes actually transferred, straight from the protocol. This is the
-    // figure every traffic-billed render service turns into money.
-    const cdp = await context.newCDPSession(page);
-    await cdp.send('Network.enable');
-    cdp.on('Network.loadingFinished', (event: { encodedDataLength?: number }) => {
-      report.transfer.bytes += event.encodedDataLength ?? 0;
-      report.transfer.requests += 1;
-    });
-
-    const startedAt = Date.now();
-    const response = await page.goto(url, { waitUntil: 'domcontentloaded', timeout: options.timeoutMs });
-    report.http.status = response?.status() ?? null;
-    report.http.finalUrl = page.url();
-
-    // Menus poll and stream; networkidle often never arrives. Waiting for it
-    // with a bound is useful, timing out on it is not a failure.
-    await page.waitForLoadState('networkidle', { timeout: 15_000 }).catch(() => undefined);
-
-    report.render.scrollRounds = await scrollToEnd(page, options);
-    report.render.durationMs = Date.now() - startedAt;
-
-    report.challenge = detectChallenge(await page.content());
-
-    const vitals = (await page.evaluate(`(() => { ${collector}; return __somaProbe.vitals(); })()`)) as {
-      heightPx: number;
-      domNodes: number;
-      title: string;
-    };
-    report.render.heightPx = vitals.heightPx;
-    report.render.domNodes = vitals.domNodes;
-    report.render.title = vitals.title;
-
-    const lines = (await page.evaluate(
-      `(() => { ${collector}; return __somaProbe.collect(); })()`,
-    )) as string[];
-    report.collectedLines = lines.length;
-
-    const parsed = parseMenuLines(lines);
-    const byWeight: Record<string, { name: string; listingCount: number }[]> = {};
-    for (const weight of CANONICAL_WEIGHTS) {
-      const names = parsed.entries
-        .filter((entry) => entry.packageWeight === weight)
-        .map((entry) => ({ name: entry.canonicalName, listingCount: entry.listingCount }))
-        .sort((left, right) => left.name.localeCompare(right.name));
-      if (names.length > 0) byWeight[WEIGHT_PRESENTATION[weight as CanonicalWeight].ounceLabel] = names;
-    }
-
-    const skippedByReason: Record<string, number> = {};
-    for (const skipped of parsed.skipped) {
-      skippedByReason[skipped.reason] = (skippedByReason[skipped.reason] ?? 0) + 1;
-    }
-
-    report.parsed = {
-      listingCount: parsed.itemCount,
-      strainCount: parsed.entries.length,
-      lineCount: parsed.lineCount,
-      ambiguousBlocks: parsed.ambiguousBlocks,
-      byWeight,
-      skippedByReason,
-      skipped: parsed.skipped,
-      collectedLines: options.dumpLines ? lines : null,
-    };
-
-    // A challenge page parses to nothing; say which of the two happened.
-    if (report.challenge) report.stoppedBecause = `access control page (${report.challenge})`;
-    else if (parsed.entries.length === 0) report.stoppedBecause = 'page rendered but no strains were recognised';
-    else report.ok = true;
-
-    await context.close();
-    return report;
-  } catch (error) {
     report.stoppedBecause = (error as Error).message;
     return report;
-  } finally {
-    await browser.close();
   }
+
+  report.robotsDetail = read.robotsDetail;
+  report.httpStatus = read.httpStatus;
+  report.finalUrl = read.finalUrl;
+  report.title = read.title;
+  report.transfer = {
+    bytes: read.bytes,
+    requests: read.requests,
+    blockedRequests: read.blockedRequests,
+    blockingEnabled: options.blockHeavy,
+  };
+  report.render = {
+    scrollRounds: read.scrollRounds,
+    heightPx: read.heightPx,
+    domNodes: read.domNodes,
+    durationMs: read.durationMs,
+  };
+  report.collectedLines = read.lines.length;
+
+  const parsed = parseMenuLines(read.lines);
+  const byWeight: Record<string, { name: string; listingCount: number }[]> = {};
+  for (const weight of CANONICAL_WEIGHTS) {
+    const names = parsed.entries
+      .filter((entry) => entry.packageWeight === weight)
+      .map((entry) => ({ name: entry.canonicalName, listingCount: entry.listingCount }))
+      .sort((left, right) => left.name.localeCompare(right.name));
+    if (names.length > 0) byWeight[WEIGHT_PRESENTATION[weight as CanonicalWeight].ounceLabel] = names;
+  }
+
+  const skippedByReason: Record<string, number> = {};
+  for (const skipped of parsed.skipped) {
+    skippedByReason[skipped.reason] = (skippedByReason[skipped.reason] ?? 0) + 1;
+  }
+
+  report.parsed = {
+    listingCount: parsed.itemCount,
+    strainCount: parsed.entries.length,
+    lineCount: parsed.lineCount,
+    ambiguousBlocks: parsed.ambiguousBlocks,
+    byWeight,
+    skippedByReason,
+    skipped: parsed.skipped,
+    collectedLines: options.dumpLines ? read.lines : null,
+  };
+
+  if (parsed.entries.length === 0) report.stoppedBecause = 'page rendered but no strains were recognised';
+  else report.ok = true;
+  return report;
 }
 
 function bar(label: string, value: string): string {
@@ -312,12 +194,14 @@ function bar(label: string, value: string): string {
 
 function printReport(report: Report): void {
   console.log(`\n${'='.repeat(72)}\n${report.url}\n${'='.repeat(72)}`);
-  console.log(bar('robots.txt', `${report.robots.allowed ? 'allowed' : 'DISALLOWED'} - ${report.robots.detail}`));
-  if (report.stoppedBecause && !report.robots.allowed) return;
+  if (report.robotsDetail) console.log(bar('robots.txt', report.robotsDetail));
+  if (report.failureCode) {
+    console.log(bar('could not read', `${report.failureCode} - ${report.stoppedBecause ?? ''}`));
+    return;
+  }
 
-  console.log(bar('http status', String(report.http.status ?? '-')));
-  console.log(bar('page title', report.render.title || '-'));
-  console.log(bar('access control', report.challenge ?? 'none detected'));
+  console.log(bar('http status', String(report.httpStatus ?? '-')));
+  console.log(bar('page title', report.title || '-'));
   console.log(
     bar(
       'transferred',
@@ -327,7 +211,12 @@ function printReport(report: Report): void {
           : ' (nothing blocked)'),
     ),
   );
-  console.log(bar('render', `${report.render.scrollRounds} scrolls, ${report.render.heightPx}px, ${report.render.domNodes} nodes, ${(report.render.durationMs / 1000).toFixed(1)}s`));
+  console.log(
+    bar(
+      'render',
+      `${report.render.scrollRounds} scrolls, ${report.render.heightPx}px, ${report.render.domNodes} nodes, ${(report.render.durationMs / 1000).toFixed(1)}s`,
+    ),
+  );
   console.log(bar('lines collected', String(report.collectedLines)));
 
   if (!report.parsed) {
@@ -339,10 +228,7 @@ function printReport(report: Report): void {
   // and comparing to the cultivar count is the usual way to conclude, wrongly,
   // that strains went missing.
   console.log(
-    bar(
-      'strains found',
-      `${report.parsed.strainCount} cultivars, from ${report.parsed.listingCount} listings`,
-    ),
+    bar('strains found', `${report.parsed.strainCount} cultivars, from ${report.parsed.listingCount} listings`),
   );
   console.log(bar('ambiguous blocks', String(report.parsed.ambiguousBlocks)));
 
@@ -376,14 +262,26 @@ function printReport(report: Report): void {
 
 async function main(): Promise<void> {
   const options = parseArgs(process.argv.slice(2));
-  const collector = await buildCollector();
+  const reader = new MenuReader({
+    headless: !options.headed,
+    blockHeavy: options.blockHeavy,
+    settleMs: options.settleMs,
+    maxScrolls: options.maxScrolls,
+    timeoutMs: options.timeoutMs,
+    userAgent: options.userAgent,
+    browserPath: options.browserPath,
+  });
   const reports: Report[] = [];
 
-  for (const [index, url] of options.urls.entries()) {
-    if (index > 0) await new Promise((resolve) => setTimeout(resolve, 3000));
-    const report = await probeUrl(url, options, collector);
-    reports.push(report);
-    printReport(report);
+  try {
+    for (const [index, url] of options.urls.entries()) {
+      if (index > 0) await new Promise((resolve) => setTimeout(resolve, 3000));
+      const report = await probeUrl(url, options, reader);
+      reports.push(report);
+      printReport(report);
+    }
+  } finally {
+    await reader.close();
   }
 
   console.log(`\n${'-'.repeat(72)}\nSummary`);
