@@ -54,6 +54,8 @@ interface Options {
   jsonPath: string | null;
   /** An existing Chromium, when you would rather not have Playwright fetch one. */
   browserPath: string | null;
+  /** Put every collected line in the JSON, for diagnosing a menu that reads badly. */
+  dumpLines: boolean;
 }
 
 interface Report {
@@ -67,12 +69,18 @@ interface Report {
   render: { scrollRounds: number; heightPx: number; domNodes: number; title: string; durationMs: number };
   collectedLines: number;
   parsed: {
-    itemCount: number;
+    /** Listings seen, before same-cultivar rows are collapsed. */
+    listingCount: number;
+    /** Distinct cultivars, after collapsing. The two differ when a menu sells one strain from two growers. */
+    strainCount: number;
     lineCount: number;
     ambiguousBlocks: number;
-    byWeight: Record<string, string[]>;
+    byWeight: Record<string, { name: string; listingCount: number }[]>;
     skippedByReason: Record<string, number>;
-    skippedSample: { line: string; reason: string }[];
+    /** Every set-aside line, with its reason. Not a sample - a missing strain is in here. */
+    skipped: { line: string; reason: string }[];
+    /** Everything the reader saw, when --dump-lines is on. */
+    collectedLines: string[] | null;
   } | null;
 }
 
@@ -88,6 +96,7 @@ function parseArgs(argv: string[]): Options {
     userAgent: null,
     jsonPath: null,
     browserPath: process.env.PROBE_CHROMIUM ?? null,
+    dumpLines: false,
   };
 
   for (let index = 0; index < argv.length; index += 1) {
@@ -108,6 +117,7 @@ function parseArgs(argv: string[]): Options {
       case '--ua': options.userAgent = next(); break;
       case '--json': options.jsonPath = next(); break;
       case '--browser': options.browserPath = next(); break;
+      case '--dump-lines': options.dumpLines = true; break;
       default:
         if (arg.startsWith('-')) throw new Error(`Unknown flag ${arg}`);
         urls.push(arg);
@@ -116,7 +126,7 @@ function parseArgs(argv: string[]): Options {
 
   if (urls.length === 0) {
     throw new Error(
-      'Usage: npm run probe -- <menu-url> [more urls...] [--headed] [--with-images] [--json out.json] [--browser /path/to/chrome]',
+      'Usage: npm run probe -- <menu-url> [more urls...] [--headed] [--with-images] [--dump-lines] [--json out.json] [--browser /path/to/chrome]',
     );
   }
   return options;
@@ -256,12 +266,12 @@ async function probeUrl(url: string, options: Options, collector: string): Promi
     report.collectedLines = lines.length;
 
     const parsed = parseMenuLines(lines);
-    const byWeight: Record<string, string[]> = {};
+    const byWeight: Record<string, { name: string; listingCount: number }[]> = {};
     for (const weight of CANONICAL_WEIGHTS) {
       const names = parsed.entries
         .filter((entry) => entry.packageWeight === weight)
-        .map((entry) => entry.canonicalName)
-        .sort((left, right) => left.localeCompare(right));
+        .map((entry) => ({ name: entry.canonicalName, listingCount: entry.listingCount }))
+        .sort((left, right) => left.name.localeCompare(right.name));
       if (names.length > 0) byWeight[WEIGHT_PRESENTATION[weight as CanonicalWeight].ounceLabel] = names;
     }
 
@@ -271,12 +281,14 @@ async function probeUrl(url: string, options: Options, collector: string): Promi
     }
 
     report.parsed = {
-      itemCount: parsed.itemCount,
+      listingCount: parsed.itemCount,
+      strainCount: parsed.entries.length,
       lineCount: parsed.lineCount,
       ambiguousBlocks: parsed.ambiguousBlocks,
       byWeight,
       skippedByReason,
-      skippedSample: parsed.skipped.slice(0, 25),
+      skipped: parsed.skipped,
+      collectedLines: options.dumpLines ? lines : null,
     };
 
     // A challenge page parses to nothing; say which of the two happened.
@@ -323,23 +335,40 @@ function printReport(report: Report): void {
     return;
   }
 
-  console.log(bar('strains found', String(report.parsed.itemCount)));
+  // Listings and cultivars are different numbers. Counting products on the page
+  // and comparing to the cultivar count is the usual way to conclude, wrongly,
+  // that strains went missing.
+  console.log(
+    bar(
+      'strains found',
+      `${report.parsed.strainCount} cultivars, from ${report.parsed.listingCount} listings`,
+    ),
+  );
   console.log(bar('ambiguous blocks', String(report.parsed.ambiguousBlocks)));
 
   const weights = Object.entries(report.parsed.byWeight);
   if (weights.length === 0) {
     console.log('\n  No strains recognised.');
   } else {
-    for (const [label, names] of weights) {
-      console.log(`\n  ${label} - ${names.length} strains`);
-      for (const name of names) console.log(`     ${name}`);
+    for (const [label, entries] of weights) {
+      console.log(`\n  ${label} - ${entries.length} strains`);
+      for (const entry of entries) {
+        console.log(`     ${entry.name}${entry.listingCount > 1 ? `  (x${entry.listingCount} listings)` : ''}`);
+      }
     }
   }
 
   const reasons = Object.entries(report.parsed.skippedByReason).sort((a, b) => b[1] - a[1]);
   if (reasons.length > 0) {
     console.log('\n  Lines set aside, by reason:');
-    for (const [reason, count] of reasons) console.log(`     ${String(count).padStart(4)}  ${reason}`);
+    for (const [reason, count] of reasons) {
+      console.log(`\n     ${String(count).padStart(4)}  ${reason}`);
+      // Examples, because a strain the parser lost is sitting in one of these
+      // lists and a bare count will never show it to you.
+      const examples = report.parsed.skipped.filter((entry) => entry.reason === reason).slice(0, 6);
+      for (const example of examples) console.log(`           ${example.line}`);
+      if (count > examples.length) console.log(`           ... and ${count - examples.length} more`);
+    }
   }
 
   if (report.stoppedBecause) console.log(`\n  VERDICT: ${report.stoppedBecause}`);
@@ -359,7 +388,7 @@ async function main(): Promise<void> {
 
   console.log(`\n${'-'.repeat(72)}\nSummary`);
   for (const report of reports) {
-    const strains = report.parsed?.itemCount ?? 0;
+    const strains = report.parsed?.strainCount ?? 0;
     const megabytes = (report.transfer.bytes / 1_048_576).toFixed(2);
     console.log(
       `  ${report.ok ? 'OK  ' : 'FAIL'}  ${String(strains).padStart(4)} strains  ${megabytes.padStart(7)} MB  ${report.url}`,
