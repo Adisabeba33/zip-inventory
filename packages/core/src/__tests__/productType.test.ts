@@ -33,13 +33,9 @@ describe('classifyProduct', () => {
   });
 
   it('excludes product classes that a menu still files under flower', () => {
-    // All three were listed under Flower on a live Dutchie menu, and none of
-    // them is plain flower.
-    for (const title of [
-      'Moonrocks Blueberry Muffin Baller Jar',
-      'Hickory Hash',
-      'Infused Pre-Ground',
-    ]) {
+    // Both were listed under Flower on a live Dutchie menu, and neither is
+    // plain flower.
+    for (const title of ['Moonrocks Blueberry Muffin Baller Jar', 'Infused Pre-Ground']) {
       assert.equal(
         classifyProduct(title, { category: 'Flower' }).productType,
         'EXCLUDED',
@@ -48,9 +44,46 @@ describe('classifyProduct', () => {
     }
   });
 
-  it('keeps Hash Plant, which is a cultivar rather than a concentrate', () => {
-    assert.equal(classifyProduct('Hash Plant 3.5g Flower', { category: 'Flower' }).productType, 'FLOWER');
-  });
+  // "Hickory Hash" was in that list until a run against a live ounce menu found
+  // it, "Baller Mints" and one other missing from a 26-product page. The
+  // retailer sells all three as flower. A word that names a product class and a
+  // cultivar family equally often cannot exclude on its own.
+  const cultivarsSharingAProductWord = [
+    'Hickory Hash 28g',
+    'Baller Mints 3.5g',
+    'Kush Mints 3.5g',
+    'Animal Mints Smalls 7g',
+    'Thin Mints 1 oz',
+    // Guarded this way from the start; the rule above generalises it.
+    'Animal Cookies 3.5g',
+    'Hash Plant 3.5g Flower',
+  ];
+  for (const title of cultivarsSharingAProductWord) {
+    it(`keeps the cultivar ${JSON.stringify(title)}`, () => {
+      assert.equal(classifyProduct(title, { category: 'Flower' }).productType, 'FLOWER');
+    });
+  }
+
+  // The protection those names used to provide has to survive the change.
+  const productsSharingACultivarWord = [
+    'Mints',
+    'Mints 10pk',
+    'Peppermint Mints 100mg',
+    'Hash',
+    'Hashish',
+    'Bubble Hash 1g',
+    'Ice Water Hash 2g',
+    'Dry Sift Hash',
+    'Hash Rosin 1g',
+    'Live Hash Rosin',
+    'Temple Ball Hash',
+    'Full Melt Hash 1g',
+  ];
+  for (const title of productsSharingACultivarWord) {
+    it(`still excludes ${JSON.stringify(title)}`, () => {
+      assert.equal(classifyProduct(title, { category: 'Flower' }).productType, 'EXCLUDED');
+    });
+  }
 
   it('records the flower subtype', () => {
     assert.equal(classifyProduct('Gushers Smalls 7g', { category: 'Flower' }).subtype, 'SMALLS');
